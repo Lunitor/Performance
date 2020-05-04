@@ -1,0 +1,10 @@
+﻿{
+  "profiles": {
+    "Lunitor.DataReader": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
