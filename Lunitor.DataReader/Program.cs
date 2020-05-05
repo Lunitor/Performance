@@ -18,7 +18,7 @@ namespace Lunitor.DataReader
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddHostedService<Worker>();
+                    services.AddHostedService<PeriodicReader>();
                 });
     }
 }
