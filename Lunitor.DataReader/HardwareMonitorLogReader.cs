@@ -6,33 +6,28 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Lunitor.DataReader
 {
-    internal class HardwareInfoFileReader
+    internal class HardwareMonitorLogReader
     {
-        private readonly ILogger<HardwareInfoFileReader> _logger;
+        private readonly ILogger<HardwareMonitorLogReader> _logger;
 
         private int lineCount;
 
-        public HardwareInfoFileReader(ILogger<HardwareInfoFileReader> logger)
+        public HardwareMonitorLogReader(ILogger<HardwareMonitorLogReader> logger)
         {
             _logger = logger;
         }
 
-        public Dictionary<Parameter, List<Data>> Read(string fileName)
+        public Dictionary<Parameter, List<Data>> Read(string[] log)
         {
-            Guard.Against.NullOrEmpty(fileName, nameof(fileName));
+            Guard.Against.Null(log, nameof(log));
 
             Dictionary<Parameter, List<Data>> parameters = new Dictionary<Parameter, List<Data>>();
 
-            using FileStream fileStream = new FileStream(fileName, FileMode.Open);
-            using StreamReader streamReader = new StreamReader(fileStream);
-
-            string line;
             lineCount = 0;
-            while ((line = streamReader.ReadLine()) != null)
+            foreach (var line in log)
             {
                 lineCount++;
                 var parts = line.Split(",").ToList();
