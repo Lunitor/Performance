@@ -16,12 +16,10 @@ namespace Lunitor.DataReader.UnitTests
             _hardwareMonitorLogReader = new HardwareMonitorLogReader(_mockLogger.Object);
         }
 
-        [Theory]
-        [InlineData("")]
-        [InlineData(null)]
-        public void ThrowExceptionWhenReadGetsNullOrEmptyString(string fileName)
+        [Fact]
+        public void ThrowExceptionWhenReadGetsNullLog()
         {
-            Assert.ThrowsAny<Exception>(() => _hardwareMonitorLogReader.Read(fileName));
+            Assert.ThrowsAny<Exception>(() => _hardwareMonitorLogReader.Read(null));
         }
     }
 }
