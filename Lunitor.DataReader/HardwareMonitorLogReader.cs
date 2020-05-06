@@ -19,7 +19,7 @@ namespace Lunitor.DataReader
             _logger = logger;
         }
 
-        public Dictionary<Parameter, List<Data>> Read(string[] log)
+        public Dictionary<Parameter, List<Data>> Read(IEnumerable<string> log)
         {
             Guard.Against.Null(log, nameof(log));
 
@@ -29,7 +29,10 @@ namespace Lunitor.DataReader
             foreach (var line in log)
             {
                 lineCount++;
-                var parts = line.Split(",").ToList();
+                var parts = line.Split(",")
+                    .Select(p => p.Trim())
+                    .ToList();
+
                 var lineType = parts[0];
 
                 switch (lineType)
@@ -38,9 +41,8 @@ namespace Lunitor.DataReader
                     case "01": break;
                     case "02": AddNewParameters(parameters, parts); break;
                     case "03": FillParametersAttributes(parameters, parts); break;
-                    case "80": AddDataUnderParamters(parameters, parts);
-                        break;
-                    default: throw new InvalidOperationException($"Unknown line type {lineType} at line: {lineCount}");
+                    case "80": AddDataUnderParamters(parameters, parts); break;
+                    default: _logger.LogWarning("Unknown line type {lineType} at line: {lineCount}", lineType, lineCount); break;
                 }
             }
 
@@ -50,13 +52,13 @@ namespace Lunitor.DataReader
 
         private void AddDataUnderParamters(Dictionary<Parameter, List<Data>> parameters, List<string> parts)
         {
-            for (int i = 2; i < parts.Count - 1; i++)
+            for (int i = 2; i < parts.Count; i++)
             {
                 var data = parameters.Values.ElementAt(i - 2);
                 try
                 {
-                    var timeStamp = DateTime.ParseExact(parts[1], "dd-mm-yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-                    var value = double.Parse(parts[i]);
+                    var timeStamp = DateTime.ParseExact(parts[1], "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                    double? value = (parts[i] == "N/A") ? (double?)null : double.Parse(parts[i]);
 
                     data.Add(new Data(timeStamp, value));
                 }
@@ -79,7 +81,7 @@ namespace Lunitor.DataReader
 
         private void AddNewParameters(Dictionary<Parameter, List<Data>> parameters, List<string> parts)
         {
-            for (int i = 2; i < parts.Count - 1; i++)
+            for (int i = 2; i < parts.Count; i++)
             {
                 if (parameters.Keys.FirstOrDefault(p => p.Name == parts[i]) == null)
                     parameters.TryAdd(new Parameter(parts[i]), new List<Data>());
