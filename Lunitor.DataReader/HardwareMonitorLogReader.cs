@@ -8,11 +8,11 @@ using System.Linq;
 
 namespace Lunitor.DataReader
 {
-    internal class HardwareMonitorLogReader
+    internal class HardwareMonitorLogReader : IHardwareMonitorLogReader
     {
         private readonly ILogger<HardwareMonitorLogReader> _logger;
 
-        private int lineCount;
+        private int _lineCount;
 
         public HardwareMonitorLogReader(ILogger<HardwareMonitorLogReader> logger)
         {
@@ -25,10 +25,10 @@ namespace Lunitor.DataReader
 
             Dictionary<Parameter, List<Data>> parameters = new Dictionary<Parameter, List<Data>>();
 
-            lineCount = 0;
+            _lineCount = 0;
             foreach (var line in log)
             {
-                lineCount++;
+                _lineCount++;
                 var parts = line.Split(",")
                     .Select(p => p.Trim())
                     .ToList();
@@ -42,12 +42,12 @@ namespace Lunitor.DataReader
                     case "02": AddNewParameters(parameters, parts); break;
                     case "03": FillParametersAttributes(parameters, parts); break;
                     case "80": AddDataUnderParamters(parameters, parts); break;
-                    default: _logger.LogWarning("Unknown line type {lineType} at line: {lineCount}", lineType, lineCount); break;
+                    default: _logger.LogWarning("Unknown line type {lineType} at line: {lineCount}", lineType, _lineCount); break;
                 }
             }
 
             return parameters;
-            
+
         }
 
         private void AddDataUnderParamters(Dictionary<Parameter, List<Data>> parameters, List<string> parts)
@@ -64,7 +64,7 @@ namespace Lunitor.DataReader
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning($"Parsing error at line {lineCount}", ex);
+                    _logger.LogWarning($"Parsing error at line {_lineCount}", ex);
                 }
             }
         }
