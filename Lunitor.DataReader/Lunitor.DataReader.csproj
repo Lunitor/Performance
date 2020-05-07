@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <None Remove="HardwareMonitoring.hml" />
+    <None Remove="testdata.hml" />
   </ItemGroup>
 
   <ItemGroup>
