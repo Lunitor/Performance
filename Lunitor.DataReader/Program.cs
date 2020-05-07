@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -18,6 +14,7 @@ namespace Lunitor.DataReader
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddSingleton<IHardwareMonitorLogReader, HardwareMonitorLogReader>();
                     services.AddHostedService<PeriodicReader>();
                 });
     }
