@@ -1,5 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace Lunitor.DataReader
 {
@@ -14,7 +16,6 @@ namespace Lunitor.DataReader
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddSingleton<IHardwareMonitorLogReader, HardwareMonitorLogReader>();
                     services.AddHostedService<PeriodicReader>();
                 });
     }
