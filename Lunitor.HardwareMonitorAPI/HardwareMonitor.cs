@@ -1,9 +1,10 @@
 ﻿using LibreHardwareMonitor.Hardware;
 using System;
+using System.Collections.Generic;
 
 namespace Lunitor.HardwareMonitorAPI
 {
-    public class HardwareMonitor
+    public class HardwareMonitor : IHardwareMonitor
     {
         private readonly Computer _computer;
         private readonly IVisitor _visitor;
@@ -59,15 +60,52 @@ namespace Lunitor.HardwareMonitorAPI
             _computer.Close();
         }
 
-        public void PrintStats()
+        public IEnumerable<SensorReading> Read()
         {
+            var readings = new List<SensorReading>();
+
+            var timeStamp = DateTime.Now;
+
             foreach (var hardware in _computer.Hardware)
             {
+                var hardwareInfo = GetHardwareInfo(hardware);
+
                 foreach (var sensor in hardware.Sensors)
                 {
-                    Console.WriteLine($"{sensor.Name} {sensor.Value}");
+                    var sensorInfo = GetSensorInfo(hardwareInfo, sensor);
+
+                    readings.Add(new SensorReading
+                    {
+                        TimeStamp = timeStamp,
+                        Hardware = hardwareInfo,
+                        Sensor = sensorInfo,
+                        Value = sensor.Value
+                    });
                 }
             }
+
+            return readings;
+        }
+
+        private static Sensor GetSensorInfo(Hardware hardwareInfo, ISensor sensor)
+        {
+            return new Sensor
+            {
+                Type = sensor.SensorType.ToString(),
+                Name = sensor.Name,
+                Hardware = hardwareInfo,
+                MinValue = sensor.Min,
+                MaxValue = sensor.Max
+            };
+        }
+
+        private static Hardware GetHardwareInfo(IHardware hardware)
+        {
+            return new Hardware
+            {
+                Type = hardware.HardwareType.ToString(),
+                Name = hardware.Name,
+            };
         }
     }
 }

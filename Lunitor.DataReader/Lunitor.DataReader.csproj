@@ -35,10 +35,6 @@
     </AssemblyAttribute>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Persistance\Entities\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Lunitor.HardwareMonitorAPI\Lunitor.HardwareMonitorAPI.csproj" />
   </ItemGroup>
 </Project>

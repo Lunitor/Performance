@@ -1,3 +1,4 @@
+using Lunitor.HardwareMonitorAPI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -15,6 +16,7 @@ namespace Lunitor.DataReader
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddHostedService<PeriodicReader>();
+                    services.AddHarwareMonitorAPI();
                 });
     }
 }

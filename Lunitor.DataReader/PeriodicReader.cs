@@ -12,22 +12,22 @@ namespace Lunitor.DataReader
     {
         private readonly ILogger<PeriodicReader> _logger;
         private readonly int _periodicity;
-        private readonly HardwareMonitor _hardwareMonitor;
+        private readonly IHardwareMonitor _hardwareMonitor;
 
 
-        public PeriodicReader(ILogger<PeriodicReader> logger, IConfiguration configuration)
+        public PeriodicReader(ILogger<PeriodicReader> logger, IConfiguration configuration, IHardwareMonitor hardwareMonitor)
         {
             _logger = logger;
             _periodicity = configuration.GetValue<int>("Reader:Periodicity");
 
-            _hardwareMonitor = new HardwareMonitor();
+            _hardwareMonitor = hardwareMonitor;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Starting with {periodicity}s periodicity", _periodicity);
 
-            _hardwareMonitor.Start(cpu: true, gpu: true, memory: true, storage: true);
+            _hardwareMonitor.Start(cpu: true, gpu: true, memory: true, storage: true, network: true, motherboard: true, controller: true);
 
             return base.StartAsync(cancellationToken);
         }
@@ -45,7 +45,11 @@ namespace Lunitor.DataReader
                 _logger.LogInformation("Running at: {time}", DateTimeOffset.Now);
                 try
                 {
-                    _hardwareMonitor.PrintStats();
+                    var readings = _hardwareMonitor.Read();
+                    foreach (var reading in readings)
+                    {
+                        Console.WriteLine($"{reading.TimeStamp} {reading.Hardware.Type} {reading.Hardware.Name} {reading.Sensor.Type} {reading.Sensor.Name} {reading.Value}");
+                    }
                 }
                 catch (Exception ex)
                 {
