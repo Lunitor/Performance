@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lunitor.DataReader.UnitTest
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{06C0DEEA-778E-488F-894D-C2364E35F91E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HardwareMonitorAPI", "HardwareMonitorAPI\HardwareMonitorAPI.csproj", "{49F2474C-898B-4B47-BB5E-5A2B0DB91D7E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lunitor.HardwareMonitorAPI", "Lunitor.HardwareMonitorAPI\Lunitor.HardwareMonitorAPI.csproj", "{49F2474C-898B-4B47-BB5E-5A2B0DB91D7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

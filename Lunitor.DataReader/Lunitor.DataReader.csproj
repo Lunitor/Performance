@@ -39,6 +39,6 @@
     <Folder Include="Persistance\Entities\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HardwareMonitorAPI\HardwareMonitorAPI.csproj" />
+    <ProjectReference Include="..\Lunitor.HardwareMonitorAPI\Lunitor.HardwareMonitorAPI.csproj" />
   </ItemGroup>
 </Project>

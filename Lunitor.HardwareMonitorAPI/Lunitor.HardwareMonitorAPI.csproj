@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="HidSharp.dll" />
     <None Remove="LibreHardwareMonitorLib.dll" />
   </ItemGroup>
 
@@ -13,6 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="HidSharp">
+      <HintPath>HidSharp.dll</HintPath>
+    </Reference>
     <Reference Include="LibreHardwareMonitorLib">
       <HintPath>LibreHardwareMonitorLib.dll</HintPath>
     </Reference>

@@ -1,7 +1,7 @@
 ﻿using LibreHardwareMonitor.Hardware;
 using System;
 
-namespace HardwareMonitorAPI
+namespace Lunitor.HardwareMonitorAPI
 {
     public class HardwareMonitor
     {
