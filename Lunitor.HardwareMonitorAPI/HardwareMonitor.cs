@@ -8,7 +8,7 @@ namespace Lunitor.HardwareMonitorAPI
         private readonly Computer _computer;
         private readonly IVisitor _visitor;
 
-        internal class CustomVisitor : IVisitor
+        internal class UpdateVisitor : IVisitor
         {
             public void VisitComputer(IComputer computer)
             {
@@ -35,14 +35,22 @@ namespace Lunitor.HardwareMonitorAPI
 
         public HardwareMonitor()
         {
-            _visitor = new CustomVisitor();
+            _visitor = new UpdateVisitor();
             _computer = new Computer();
         }
 
-        public void Start()
+        public void Start(bool cpu = false, bool gpu = false, bool memory = false, bool storage = false, bool network = false, bool motherboard = false, bool controller = false)
         {
             _computer.Open();
-            _computer.IsCpuEnabled = true;
+
+            _computer.IsCpuEnabled = cpu;
+            _computer.IsGpuEnabled = gpu;
+            _computer.IsMemoryEnabled = memory;
+            _computer.IsStorageEnabled = storage;
+            _computer.IsNetworkEnabled = network;
+            _computer.IsMotherboardEnabled = motherboard;
+            _computer.IsControllerEnabled = controller;
+
             _computer.Accept(_visitor);
         }
 
@@ -53,15 +61,11 @@ namespace Lunitor.HardwareMonitorAPI
 
         public void PrintStats()
         {
-            for (int i = 0; i < _computer.Hardware.Length; i++)
+            foreach (var hardware in _computer.Hardware)
             {
-                if (_computer.Hardware[i].HardwareType == HardwareType.Cpu)
+                foreach (var sensor in hardware.Sensors)
                 {
-                    for (int j = 0; j < _computer.Hardware[i].Sensors.Length; j++)
-                    {
-                        if (_computer.Hardware[i].Sensors[j].SensorType == SensorType.Temperature)
-                            Console.WriteLine($"{_computer.Hardware[i].Sensors[j].Name}: {_computer.Hardware[i].Sensors[j].Value?.ToString()}");
-                    }
+                    Console.WriteLine($"{sensor.Name} {sensor.Value}");
                 }
             }
         }

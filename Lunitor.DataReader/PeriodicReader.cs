@@ -27,7 +27,7 @@ namespace Lunitor.DataReader
         {
             _logger.LogInformation("Starting with {periodicity}s periodicity", _periodicity);
 
-            _hardwareMonitor.Start();
+            _hardwareMonitor.Start(cpu: true, gpu: true, memory: true, storage: true);
 
             return base.StartAsync(cancellationToken);
         }
