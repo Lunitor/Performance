@@ -1,4 +1,5 @@
 ﻿using LibreHardwareMonitor.Hardware;
+using Lunitor.HardwareMonitorAPI.Models;
 using System;
 using System.Collections.Generic;
 
@@ -87,7 +88,7 @@ namespace Lunitor.HardwareMonitorAPI
             return readings;
         }
 
-        private static Sensor GetSensorInfo(Hardware hardwareInfo, ISensor sensor)
+        private static Sensor GetSensorInfo(Models.Hardware hardwareInfo, ISensor sensor)
         {
             return new Sensor
             {
@@ -99,9 +100,9 @@ namespace Lunitor.HardwareMonitorAPI
             };
         }
 
-        private static Hardware GetHardwareInfo(IHardware hardware)
+        private static Models.Hardware GetHardwareInfo(IHardware hardware)
         {
-            return new Hardware
+            return new Models.Hardware
             {
                 Type = hardware.HardwareType.ToString(),
                 Name = hardware.Name,

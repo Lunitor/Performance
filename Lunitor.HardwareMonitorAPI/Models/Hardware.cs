@@ -1,4 +1,4 @@
-﻿namespace Lunitor.HardwareMonitorAPI
+﻿namespace Lunitor.HardwareMonitorAPI.Models
 {
     public class Hardware
     {

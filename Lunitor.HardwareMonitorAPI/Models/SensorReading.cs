@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Lunitor.HardwareMonitorAPI
+namespace Lunitor.HardwareMonitorAPI.Models
 {
     public class SensorReading
     {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Lunitor.HardwareMonitorAPI.Models;
+using System.Collections.Generic;
 
 namespace Lunitor.HardwareMonitorAPI
 {
