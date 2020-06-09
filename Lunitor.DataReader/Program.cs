@@ -17,7 +17,6 @@ namespace Lunitor.DataReader
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    
                     services.AddHostedService<PeriodicReader>();
                     services.AddCache(hostContext.Configuration.GetConnectionString("Redis"));
                     services.AddHarwareMonitorAPI();
