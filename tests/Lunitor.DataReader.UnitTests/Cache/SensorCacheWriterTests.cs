@@ -8,23 +8,23 @@ using Xunit;
 
 namespace Lunitor.DataReader.UnitTests.Cache
 {
-    public class SensorReadingCacheTests
+    public class SensorCacheWriterTests
     {
-        SensorReadingCache _sensorReadingCache;
+        SensorCacheWriter _sensorCacheWriter;
         Mock<IDatabase> _databaseMock;
 
-        public SensorReadingCacheTests()
+        public SensorCacheWriterTests()
         {
             _databaseMock = new Mock<IDatabase>();
-            _sensorReadingCache = new SensorReadingCache(_databaseMock.Object);
+            _sensorCacheWriter = new SensorCacheWriter(_databaseMock.Object);
         }
 
         [Fact]
         public void AddWithNullShouldThrowArgumentNullException()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => _sensorReadingCache.Add(null));
+            var exception = Assert.Throws<ArgumentNullException>(() => _sensorCacheWriter.Add(null));
 
-            var paramName = typeof(SensorReadingCache).GetParamName(nameof(_sensorReadingCache.Add), 0);
+            var paramName = typeof(SensorCacheWriter).GetParamName(nameof(_sensorCacheWriter.Add), 0);
             Assert.Equal(paramName, exception.ParamName);
         }
 
@@ -50,7 +50,7 @@ namespace Lunitor.DataReader.UnitTests.Cache
                 }
             };
 
-            _sensorReadingCache.Add(sensorReadings);
+            _sensorCacheWriter.Add(sensorReadings);
 
             _databaseMock.Verify(db => db.ListLeftPush(It.IsAny<RedisKey>(), It.IsAny<RedisValue[]>(), It.IsAny<CommandFlags>()), Times.AtLeastOnce);
         }
@@ -59,7 +59,7 @@ namespace Lunitor.DataReader.UnitTests.Cache
         [MemberData(nameof(SensorReadingDataAndExpectedGroupNumber))]
         public void AddWithNotEmptySensorReadingsShouldCallListLeftPushTimesAsManyHarwareSensorPairsAre(IEnumerable<SensorReading> sensorReadings, int expectedGroupNumber)
         {
-            _sensorReadingCache.Add(sensorReadings);
+            _sensorCacheWriter.Add(sensorReadings);
 
             _databaseMock.Verify(db => db.ListLeftPush(It.IsAny<RedisKey>(), It.IsAny<RedisValue[]>(), It.IsAny<CommandFlags>()), Times.Exactly(expectedGroupNumber));
         }
@@ -68,7 +68,7 @@ namespace Lunitor.DataReader.UnitTests.Cache
         [MemberData(nameof(SensorReadingDataAndExpectedListKeys))]
         public void AddWithNotEmptySensorReadingsShouldCallListLeftPushTimesWithHardwareNameSensorNameKey(IEnumerable<SensorReading> sensorReadings, string[] expectedListKeys)
         {
-            _sensorReadingCache.Add(sensorReadings);
+            _sensorCacheWriter.Add(sensorReadings);
 
             foreach (var listKey in expectedListKeys)
             {

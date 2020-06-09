@@ -4,21 +4,19 @@ using Moq;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Xunit;
 
 namespace Lunitor.Api.UnitTests.Cache
 {
-    public class SensorReadingCacheTests
+    public class SensorCacheReaderTests
     {
-        private SensorReadingCache _sensorReadingCache;
+        private SensorCacheReader _sensorCacheReader;
         private Mock<IDatabase> _databaseMock;
         private Mock<IServer> _server;
 
-        public SensorReadingCacheTests()
+        public SensorCacheReaderTests()
         {
             _databaseMock = new Mock<IDatabase>();
             _databaseMock.Setup(db => db.ListRange(It.IsAny<RedisKey>(), 0, -1, It.IsAny<CommandFlags>()))
@@ -28,7 +26,7 @@ namespace Lunitor.Api.UnitTests.Cache
             _server.Setup(s => s.Keys(It.IsAny<int>(), It.IsAny<RedisValue>(), It.IsAny<int>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<CommandFlags>()))
                 .Returns(new List<RedisKey>() { "key" });
 
-            _sensorReadingCache = new SensorReadingCache(_databaseMock.Object, _server.Object);
+            _sensorCacheReader = new SensorCacheReader(_databaseMock.Object, _server.Object);
         }
 
         [Fact]
@@ -37,7 +35,7 @@ namespace Lunitor.Api.UnitTests.Cache
             _databaseMock.Setup(db => db.ListRange(It.IsAny<RedisKey>(), 0, -1, It.IsAny<CommandFlags>()))
                 .Returns(new RedisValue[0]);
 
-            var result = _sensorReadingCache.GetAll();
+            var result = _sensorCacheReader.GetAll();
 
             Assert.NotNull(result);
             Assert.Empty(result);
@@ -46,7 +44,7 @@ namespace Lunitor.Api.UnitTests.Cache
         [Fact]
         public void GetAllShouldReturnAllSensorReadingsFromCache()
         {
-            var result = _sensorReadingCache.GetAll();
+            var result = _sensorCacheReader.GetAll();
 
             Assert.NotEmpty(result);
             Assert.Equal(SensorReadingsTestData_Serialized.Count(), result.Count());
@@ -55,7 +53,7 @@ namespace Lunitor.Api.UnitTests.Cache
         [Fact]
         public void GetAllShouldReturnCorrectlyDeserializedSensorReadings()
         {
-            var result = _sensorReadingCache.GetAll();
+            var result = _sensorCacheReader.GetAll();
 
             Assert.NotEmpty(result);
             foreach (var sensorReading in result)

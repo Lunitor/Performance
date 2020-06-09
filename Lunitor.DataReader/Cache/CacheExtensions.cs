@@ -14,7 +14,7 @@ namespace Lunitor.DataReader.Cache
                 return connectionMultiplexer.GetDatabase();
             });
 
-            services.AddSingleton<ISensorReadingCache, SensorReadingCache>();
+            services.AddSingleton<ISensorCacheWriter, SensorCacheWriter>();
         }
     }
 }

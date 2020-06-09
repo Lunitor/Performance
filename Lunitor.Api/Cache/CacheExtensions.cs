@@ -12,7 +12,7 @@ namespace Lunitor.Api.Cache
             services.AddSingleton(sp => connectionMx.GetDatabase());
             services.AddSingleton(sp => connectionMx.GetServer(connectionMx.Configuration));
 
-            services.AddSingleton<ISensorReadingCache, SensorReadingCache>();
+            services.AddSingleton<ISensorCacheReader, SensorCacheReader>();
         }
     }
 }

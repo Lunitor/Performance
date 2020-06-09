@@ -6,12 +6,12 @@ using System.Text.Json;
 
 namespace Lunitor.Api.Cache
 {
-    public class SensorReadingCache : ISensorReadingCache
+    public class SensorCacheReader : ISensorCacheReader
     {
         private readonly IDatabase _cache;
         private readonly IServer _server;
 
-        public SensorReadingCache(IDatabase cache, IServer server)
+        public SensorCacheReader(IDatabase cache, IServer server)
         {
             _cache = cache;
             _server = server;

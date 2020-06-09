@@ -7,11 +7,11 @@ using System.Text.Json;
 
 namespace Lunitor.DataReader.Cache
 {
-    class SensorReadingCache : ISensorReadingCache
+    class SensorCacheWriter : ISensorCacheWriter
     {
         private readonly IDatabase _cache;
 
-        public SensorReadingCache(IDatabase cache)
+        public SensorCacheWriter(IDatabase cache)
         {
             _cache = cache;
         }
