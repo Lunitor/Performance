@@ -1,3 +1,4 @@
+using Lunitor.DataReader.Cache;
 using Lunitor.HardwareMonitorAPI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -13,14 +14,15 @@ namespace Lunitor.DataReader
         private readonly ILogger<PeriodicReader> _logger;
         private readonly int _periodicity;
         private readonly IHardwareMonitor _hardwareMonitor;
+        private readonly ISensorReadingCache _sensorReadingCache;
 
-
-        public PeriodicReader(ILogger<PeriodicReader> logger, IConfiguration configuration, IHardwareMonitor hardwareMonitor)
+        public PeriodicReader(ILogger<PeriodicReader> logger, IConfiguration configuration, IHardwareMonitor hardwareMonitor, ISensorReadingCache sensorReadingCache)
         {
             _logger = logger;
             _periodicity = configuration.GetValue<int>("Reader:Periodicity");
 
             _hardwareMonitor = hardwareMonitor;
+            _sensorReadingCache = sensorReadingCache;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -50,6 +52,8 @@ namespace Lunitor.DataReader
                     {
                         Console.WriteLine($"{reading.TimeStamp} {reading.Hardware.Type} {reading.Hardware.Name} {reading.Sensor.Type} {reading.Sensor.Name} {reading.Value}");
                     }
+
+                    _sensorReadingCache.Add(readings);
                 }
                 catch (Exception ex)
                 {
