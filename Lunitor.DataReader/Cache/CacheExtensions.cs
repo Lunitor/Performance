@@ -1,18 +1,15 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
 namespace Lunitor.DataReader.Cache
 {
     public static class CacheExtensions
     {
-        public static void AddCache(this IServiceCollection services)
+        public static void AddCache(this IServiceCollection services, string connection)
         {
             services.AddSingleton(sp =>
             {
-                var configuration = sp.GetRequiredService<IConfiguration>();
-
-                ConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis"));
+                ConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(connection);
 
                 return connectionMultiplexer.GetDatabase();
             });

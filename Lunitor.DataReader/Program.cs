@@ -1,5 +1,6 @@
 using Lunitor.DataReader.Cache;
 using Lunitor.HardwareMonitorAPI;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -16,8 +17,9 @@ namespace Lunitor.DataReader
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
+                    
                     services.AddHostedService<PeriodicReader>();
-                    services.AddCache();
+                    services.AddCache(hostContext.Configuration.GetConnectionString("Redis"));
                     services.AddHarwareMonitorAPI();
                 });
     }
