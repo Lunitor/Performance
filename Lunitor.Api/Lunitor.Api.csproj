@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lunitor.HardwareMonitorAPI\Lunitor.HardwareMonitorAPI.csproj" />
+    <ProjectReference Include="..\Lunitor.Shared\Lunitor.Shared.csproj" />
   </ItemGroup>
 
 

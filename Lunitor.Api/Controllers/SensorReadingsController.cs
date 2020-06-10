@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Lunitor.Api.Cache;
-using Lunitor.HardwareMonitorAPI.Models;
-using Microsoft.AspNetCore.Http;
+﻿using Lunitor.Api.Cache;
+using Lunitor.Shared.Dto;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace Lunitor.Api.Controllers
 {
@@ -21,7 +17,7 @@ namespace Lunitor.Api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<SensorReading> GetAll()
+        public IEnumerable<SensorReadingDto> GetAll()
         {
             return _sensorCacheReader.GetAll();
         }

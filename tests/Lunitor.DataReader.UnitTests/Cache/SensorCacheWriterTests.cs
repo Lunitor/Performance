@@ -1,5 +1,6 @@
 ﻿using Lunitor.DataReader.Cache;
 using Lunitor.HardwareMonitorAPI.Models;
+using Lunitor.Shared.Dto;
 using Moq;
 using StackExchange.Redis;
 using System;
@@ -39,12 +40,12 @@ namespace Lunitor.DataReader.UnitTests.Cache
         [Fact]
         public void AddWithNotEmptySensorReadingsShouldCallListLeftPush()
         {
-            var sensorReadings = new List<SensorReading>()
+            var sensorReadings = new List<SensorReadingDto>()
             {
-                new SensorReading
+                new SensorReadingDto
                 {
-                    Hardware = new Hardware(){ Name="Hardware"},
-                    Sensor = new Sensor(){ Name="Sensor"},
+                    Hardware = new HardwareDto(){ Name="Hardware"},
+                    Sensor = new SensorDto(){ Name="Sensor"},
                     TimeStamp = DateTime.Now,
                     Value = 1
                 }
@@ -57,7 +58,7 @@ namespace Lunitor.DataReader.UnitTests.Cache
 
         [Theory]
         [MemberData(nameof(SensorReadingDataAndExpectedGroupNumber))]
-        public void AddWithNotEmptySensorReadingsShouldCallListLeftPushTimesAsManyHarwareSensorPairsAre(IEnumerable<SensorReading> sensorReadings, int expectedGroupNumber)
+        public void AddWithNotEmptySensorReadingsShouldCallListLeftPushTimesAsManyHarwareSensorPairsAre(IEnumerable<SensorReadingDto> sensorReadings, int expectedGroupNumber)
         {
             _sensorCacheWriter.Add(sensorReadings);
 
@@ -66,7 +67,7 @@ namespace Lunitor.DataReader.UnitTests.Cache
 
         [Theory]
         [MemberData(nameof(SensorReadingDataAndExpectedListKeys))]
-        public void AddWithNotEmptySensorReadingsShouldCallListLeftPushTimesWithHardwareNameSensorNameKey(IEnumerable<SensorReading> sensorReadings, string[] expectedListKeys)
+        public void AddWithNotEmptySensorReadingsShouldCallListLeftPushTimesWithHardwareNameSensorNameKey(IEnumerable<SensorReadingDto> sensorReadings, string[] expectedListKeys)
         {
             _sensorCacheWriter.Add(sensorReadings);
 
@@ -80,84 +81,84 @@ namespace Lunitor.DataReader.UnitTests.Cache
         public static IEnumerable<object[]> SensorReadingDataAndExpectedListKeys =>
             new List<object[]>
             {
-                new object[] { _sensorReadingsWithOneGroup, new[] {"Hardware.Sensor"} },
-                new object[] { _sensorReadingsWithTwoGroup, new[] {"Hardware.Sensor", "Hardware2.Sensor" } },
-                new object[] { _sensorReadingsWithThreeGroup, new[] {"Hardware.Sensor", "Hardware2.Sensor", "Hardware3.Sensor2" } }
+                new object[] { _sensorReadingDtosWithOneGroup, new[] {"Hardware.Sensor"} },
+                new object[] { _sensorReadingDtosWithTwoGroup, new[] {"Hardware.Sensor", "Hardware2.Sensor" } },
+                new object[] { _sensorReadingDtosWithThreeGroup, new[] {"Hardware.Sensor", "Hardware2.Sensor", "Hardware3.Sensor2" } }
             };
 
         public static IEnumerable<object[]> SensorReadingDataAndExpectedGroupNumber => 
             new List<object[]>
             {
-                new object[] { _sensorReadingsWithOneGroup, 1 },
-                new object[] { _sensorReadingsWithTwoGroup, 2 },
-                new object[] { _sensorReadingsWithThreeGroup, 3 },
+                new object[] { _sensorReadingDtosWithOneGroup, 1 },
+                new object[] { _sensorReadingDtosWithTwoGroup, 2 },
+                new object[] { _sensorReadingDtosWithThreeGroup, 3 },
             };
 
-        private static readonly IEnumerable<SensorReading> _sensorReadingsWithOneGroup = new List<SensorReading>() {
-                                new SensorReading
+        private static readonly IEnumerable<SensorReadingDto> _sensorReadingDtosWithOneGroup = new List<SensorReadingDto>() {
+                                new SensorReadingDto
                                 {
-                                    Hardware = new Hardware(){ Name="Hardware"},
-                                    Sensor = new Sensor(){ Name="Sensor"},
+                                    Hardware = new HardwareDto(){ Name="Hardware"},
+                                    Sensor = new SensorDto(){ Name="Sensor"},
                                     TimeStamp = DateTime.Now,
                                     Value = 1
                                 }};
 
-        private static readonly IEnumerable<SensorReading> _sensorReadingsWithTwoGroup = new List<SensorReading>() {
-                                    new SensorReading
+        private static readonly IEnumerable<SensorReadingDto> _sensorReadingDtosWithTwoGroup = new List<SensorReadingDto>() {
+                                    new SensorReadingDto
                                     {
-                                        Hardware = new Hardware(){ Name="Hardware"},
-                                        Sensor = new Sensor(){ Name="Sensor"},
+                                        Hardware = new HardwareDto(){ Name="Hardware"},
+                                        Sensor = new SensorDto(){ Name="Sensor"},
                                         TimeStamp = DateTime.Now,
                                         Value = 1
                                     },
-                                    new SensorReading
+                                    new SensorReadingDto
                                     {
-                                        Hardware = new Hardware(){ Name="Hardware2"},
-                                        Sensor = new Sensor(){ Name="Sensor"},
+                                        Hardware = new HardwareDto(){ Name="Hardware2"},
+                                        Sensor = new SensorDto(){ Name="Sensor"},
                                         TimeStamp = DateTime.Now,
                                         Value = 1
                                     },
-                                    new SensorReading
+                                    new SensorReadingDto
                                     {
-                                        Hardware = new Hardware(){ Name="Hardware2"},
-                                        Sensor = new Sensor(){ Name="Sensor"},
+                                        Hardware = new HardwareDto(){ Name="Hardware2"},
+                                        Sensor = new SensorDto(){ Name="Sensor"},
                                         TimeStamp = DateTime.Now,
                                         Value = 1
                                     } };
 
-        private static readonly IEnumerable<SensorReading> _sensorReadingsWithThreeGroup = new List<SensorReading>() {
-                                    new SensorReading
+        private static readonly IEnumerable<SensorReadingDto> _sensorReadingDtosWithThreeGroup = new List<SensorReadingDto>() {
+                                    new SensorReadingDto
                                     {
-                                        Hardware = new Hardware(){ Name="Hardware"},
-                                        Sensor = new Sensor(){ Name="Sensor"},
+                                        Hardware = new HardwareDto(){ Name="Hardware"},
+                                        Sensor = new SensorDto(){ Name="Sensor"},
                                         TimeStamp = DateTime.Now,
                                         Value = 1
                                     },
-                                    new SensorReading
+                                    new SensorReadingDto
                                     {
-                                        Hardware = new Hardware(){ Name="Hardware"},
-                                        Sensor = new Sensor(){ Name="Sensor"},
+                                        Hardware = new HardwareDto(){ Name="Hardware"},
+                                        Sensor = new SensorDto(){ Name="Sensor"},
                                         TimeStamp = DateTime.Now,
                                         Value = 1
                                     },
-                                    new SensorReading
+                                    new SensorReadingDto
                                     {
-                                        Hardware = new Hardware(){ Name="Hardware2"},
-                                        Sensor = new Sensor(){ Name="Sensor"},
+                                        Hardware = new HardwareDto(){ Name="Hardware2"},
+                                        Sensor = new SensorDto(){ Name="Sensor"},
                                         TimeStamp = DateTime.Now,
                                         Value = 1
                                     },
-                                    new SensorReading
+                                    new SensorReadingDto
                                     {
-                                        Hardware = new Hardware(){ Name="Hardware2"},
-                                        Sensor = new Sensor(){ Name="Sensor"},
+                                        Hardware = new HardwareDto(){ Name="Hardware2"},
+                                        Sensor = new SensorDto(){ Name="Sensor"},
                                         TimeStamp = DateTime.Now,
                                         Value = 1
                                     },
-                                    new SensorReading
+                                    new SensorReadingDto
                                     {
-                                        Hardware = new Hardware(){ Name="Hardware3"},
-                                        Sensor = new Sensor(){ Name="Sensor2"},
+                                        Hardware = new HardwareDto(){ Name="Hardware3"},
+                                        Sensor = new SensorDto(){ Name="Sensor2"},
                                         TimeStamp = DateTime.Now,
                                         Value = 1
                                     } };

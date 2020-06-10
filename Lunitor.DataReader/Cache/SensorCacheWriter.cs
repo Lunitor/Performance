@@ -1,5 +1,5 @@
 ﻿using Ardalis.GuardClauses;
-using Lunitor.HardwareMonitorAPI.Models;
+using Lunitor.Shared.Dto;
 using StackExchange.Redis;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ namespace Lunitor.DataReader.Cache
             _cache = cache;
         }
 
-        public void Add(IEnumerable<SensorReading> sensorReadings)
+        public void Add(IEnumerable<SensorReadingDto> sensorReadings)
         {
             Guard.Against.Null(sensorReadings, nameof(sensorReadings));
 

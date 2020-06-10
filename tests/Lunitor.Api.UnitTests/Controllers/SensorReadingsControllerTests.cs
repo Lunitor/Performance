@@ -1,6 +1,6 @@
 ﻿using Lunitor.Api.Cache;
 using Lunitor.Api.Controllers;
-using Lunitor.HardwareMonitorAPI.Models;
+using Lunitor.Shared.Dto;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -42,39 +42,39 @@ namespace Lunitor.Api.UnitTests.Controllers
             Assert.Equal(SensorReadingsTestData.Count(), result.Count());
         }
 
-        public static IEnumerable<SensorReading> SensorReadingsTestData => new List<SensorReading>() {
-                                    new SensorReading
+        public static IEnumerable<SensorReadingDto> SensorReadingsTestData => new List<SensorReadingDto>() {
+                                    new SensorReadingDto
                                     {
-                                        Hardware = new Hardware(){ Name="Hardware"},
-                                        Sensor = new Sensor(){ Name="Sensor"},
+                                        Hardware = new HardwareDto(){ Name="Hardware"},
+                                        Sensor = new SensorDto(){ Name="Sensor"},
                                         TimeStamp = new DateTime(2020, 6, 9, 14, 54, 32),
                                         Value = 1
                                     },
-                                    new SensorReading
+                                    new SensorReadingDto
                                     {
-                                        Hardware = new Hardware(){ Name="Hardware"},
-                                        Sensor = new Sensor(){ Name="Sensor"},
+                                        Hardware = new HardwareDto(){ Name="Hardware"},
+                                        Sensor = new SensorDto(){ Name="Sensor"},
                                         TimeStamp = new DateTime(2020, 6, 9, 14, 58, 10),
                                         Value = 1
                                     },
-                                    new SensorReading
+                                    new SensorReadingDto
                                     {
-                                        Hardware = new Hardware(){ Name="Hardware2"},
-                                        Sensor = new Sensor(){ Name="Sensor"},
+                                        Hardware = new HardwareDto(){ Name="Hardware2"},
+                                        Sensor = new SensorDto(){ Name="Sensor"},
                                         TimeStamp = new DateTime(2020, 6, 9, 14, 54, 32),
                                         Value = 1
                                     },
-                                    new SensorReading
+                                    new SensorReadingDto
                                     {
-                                        Hardware = new Hardware(){ Name="Hardware2"},
-                                        Sensor = new Sensor(){ Name="Sensor"},
+                                        Hardware = new HardwareDto(){ Name="Hardware2"},
+                                        Sensor = new SensorDto(){ Name="Sensor"},
                                         TimeStamp = new DateTime(2020, 6, 9, 14, 58, 15),
                                         Value = 1
                                     },
-                                    new SensorReading
+                                    new SensorReadingDto
                                     {
-                                        Hardware = new Hardware(){ Name="Hardware3"},
-                                        Sensor = new Sensor(){ Name="Sensor2"},
+                                        Hardware = new HardwareDto(){ Name="Hardware3"},
+                                        Sensor = new SensorDto(){ Name="Sensor2"},
                                         TimeStamp = new DateTime(2020, 6, 9, 14, 54, 32),
                                         Value = 1
                                     } };

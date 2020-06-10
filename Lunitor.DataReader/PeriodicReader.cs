@@ -1,9 +1,11 @@
 using Lunitor.DataReader.Cache;
 using Lunitor.HardwareMonitorAPI;
+using Lunitor.Shared.Dto;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -53,7 +55,7 @@ namespace Lunitor.DataReader
                         Console.WriteLine($"{reading.TimeStamp} {reading.Hardware.Type} {reading.Hardware.Name} {reading.Sensor.Type} {reading.Sensor.Name} {reading.Value}");
                     }
 
-                    _sensorCacheWriter.Add(readings);
+                    _sensorCacheWriter.Add(readings.Select(sr => sr.Map()));
                 }
                 catch (Exception ex)
                 {
