@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Lunitor.Api.Cache
 {
-    interface ISensorCacheReader
+    public interface ISensorCacheReader
     {
         IEnumerable<SensorReading> GetAll();
     }
