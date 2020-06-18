@@ -18,5 +18,8 @@
   },
   "scripts": {
     "build": "webpack-cli app.tsx --config webpack-config.js"
+  },
+  "devDependencies": {
+    "http-proxy-middleware": "^1.0.4"
   }
 }

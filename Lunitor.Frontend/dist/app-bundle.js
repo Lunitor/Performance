@@ -109,21 +109,51 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Hello = void 0;
+exports.Application = void 0;
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 var ReactDOM = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-var Hello = /** @class */ (function (_super) {
-    __extends(Hello, _super);
-    function Hello() {
-        return _super !== null && _super.apply(this, arguments) || this;
+var Application = /** @class */ (function (_super) {
+    __extends(Application, _super);
+    function Application() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.state = {
+            sensorReadings: []
+        };
+        return _this;
     }
-    Hello.prototype.render = function () {
-        return (React.createElement("h1", null, "Lunitor"));
+    Application.prototype.render = function () {
+        return (React.createElement("div", null, this.state.sensorReadings
+            .sort(function (a, b) {
+            if (a.timeStamp == b.timeStamp)
+                return 0;
+            else if (a.timeStamp < b.timeStamp)
+                return -1;
+            else if (a.timeStamp > b.timeStamp)
+                return 1;
+        })
+            .filter(function (i, index) { return (index < 10); })
+            .map(function (sensorReading) { return (React.createElement("div", { class: "card" },
+            React.createElement("div", { class: "card-body" },
+                React.createElement("div", { class: "row" },
+                    React.createElement("span", null, sensorReading.timeStamp)),
+                React.createElement("div", { class: "row" },
+                    React.createElement("div", { class: "col-5" }, sensorReading.hardware.name),
+                    React.createElement("div", { class: "col-5" }, sensorReading.sensor.name),
+                    React.createElement("div", { class: "col-2" }, sensorReading.value))))); })));
     };
-    return Hello;
+    Application.prototype.componentDidMount = function () {
+        var _this = this;
+        fetch('/sensorreadings')
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+            _this.setState({ sensorReadings: data });
+        })
+            .catch(console.log);
+    };
+    return Application;
 }(React.Component));
-exports.Hello = Hello;
-ReactDOM.render(React.createElement(Hello, null), document.getElementById('root'));
+exports.Application = Application;
+ReactDOM.render(React.createElement(Application, null), document.getElementById('root'));
 
 
 /***/ }),
