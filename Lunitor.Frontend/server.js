@@ -5,7 +5,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 var app = express();
 
-app.use('/sensorreadings', createProxyMiddleware({ target: 'http://localhost:55861', changeOrigin: true }));
+app.use('/sensorreadings', createProxyMiddleware({ target: 'http://localhost:55800', changeOrigin: true }));
 
 var staticPath = path.join(__dirname, '/');
 app.use(express.static(staticPath));
