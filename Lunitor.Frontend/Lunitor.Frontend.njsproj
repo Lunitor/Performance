@@ -50,10 +50,16 @@
     <TypeScriptCompile Include="app.tsx">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="models\IHardware.ts" />
+    <TypeScriptCompile Include="models\ISensor.ts" />
+    <TypeScriptCompile Include="models\ISensorReading.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dist\" />
     <Folder Include="components\" />
+    <Folder Include="models\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>
