@@ -59,8 +59,7 @@ namespace Lunitor.DataReader
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"{nameof(HardwareMonitor)} failed to read get hardware data");
-                    _hardwareMonitor.Stop();
+                    _logger.LogError(ex, $"{nameof(HardwareMonitor)} failed to read hardware data");
                 }
 
                 await Task.Delay(_periodicity*1000, stoppingToken);

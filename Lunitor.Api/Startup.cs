@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lunitor.Api.Cache;
+using Lunitor.Shared.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,8 @@ namespace Lunitor.Api
         {
             services.AddCache(Configuration.GetConnectionString("Redis"));
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(configure => configure.JsonSerializerOptions.Converters.Add(new FloatStringConverter()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

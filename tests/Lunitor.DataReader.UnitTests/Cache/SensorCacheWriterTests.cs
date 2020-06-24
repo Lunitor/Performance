@@ -77,6 +77,15 @@ namespace Lunitor.DataReader.UnitTests.Cache
             }
         }
 
+        [Theory]
+        [MemberData(nameof(SensorReadingDataWithSpecialFloatValues))]
+        public void AddWithSensorReadingDataWithSpecialFloatValuesShouldCallListLeftPush(IEnumerable<SensorReadingDto> sensorReadings)
+        {
+            _sensorCacheWriter.Add(sensorReadings);
+
+            _databaseMock.Verify(db => db.ListLeftPush(It.IsAny<RedisKey>(), It.IsAny<RedisValue[]>(), It.IsAny<CommandFlags>()));
+        }
+
 
         public static IEnumerable<object[]> SensorReadingDataAndExpectedListKeys =>
             new List<object[]>
@@ -93,6 +102,35 @@ namespace Lunitor.DataReader.UnitTests.Cache
                 new object[] { _sensorReadingDtosWithTwoGroup, 2 },
                 new object[] { _sensorReadingDtosWithThreeGroup, 3 },
             };
+
+        public static IEnumerable<object[]> SensorReadingDataWithSpecialFloatValues =>
+            new List<object[]>
+            {
+                        new object[] { _sensorReadingDtosWithOneGroup}
+            };
+
+        private static readonly IEnumerable<SensorReadingDto> _sensorReadingDtosWithSpecialFloatValues = new List<SensorReadingDto>() {
+                                new SensorReadingDto
+                                {
+                                    Hardware = new HardwareDto(){ Name="Hardware"},
+                                    Sensor = new SensorDto(){ Name="Sensor"},
+                                    TimeStamp = DateTime.Now,
+                                    Value = float.NaN
+                                },
+                                new SensorReadingDto
+                                {
+                                    Hardware = new HardwareDto(){ Name="Hardware"},
+                                    Sensor = new SensorDto(){ Name="Sensor"},
+                                    TimeStamp = DateTime.Now,
+                                    Value = float.NegativeInfinity
+                                },
+                                new SensorReadingDto
+                                {
+                                    Hardware = new HardwareDto(){ Name="Hardware"},
+                                    Sensor = new SensorDto(){ Name="Sensor"},
+                                    TimeStamp = DateTime.Now,
+                                    Value = float.PositiveInfinity
+                                }};
 
         private static readonly IEnumerable<SensorReadingDto> _sensorReadingDtosWithOneGroup = new List<SensorReadingDto>() {
                                 new SensorReadingDto

@@ -1,5 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using Lunitor.Shared.Dto;
+using Lunitor.Shared.Json;
 using StackExchange.Redis;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,14 @@ namespace Lunitor.DataReader.Cache
     {
         private readonly IDatabase _cache;
 
+        private readonly JsonSerializerOptions _serializerOptions;
+
         public SensorCacheWriter(IDatabase cache)
         {
             _cache = cache;
+
+            _serializerOptions = new JsonSerializerOptions();
+            _serializerOptions.Converters.Add(new FloatStringConverter());
         }
 
         public void Add(IEnumerable<SensorReadingDto> sensorReadings)
@@ -25,7 +31,7 @@ namespace Lunitor.DataReader.Cache
             foreach (var group in sensorReadingsByTypes)
             {
                 var listKey = $"{group.Key.HardwareName}.{group.Key.SensorName}";
-                var readings = group.Select(sr => JsonSerializer.Serialize(sr)).ToArray().ToRedisValueArray();
+                var readings = group.Select(sr => JsonSerializer.Serialize(sr, _serializerOptions)).ToArray().ToRedisValueArray();
 
                 _cache.ListLeftPush(listKey, readings);
             }
