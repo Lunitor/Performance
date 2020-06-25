@@ -8,6 +8,7 @@ import {
 import { TimeSeries } from "pondjs";
 import { ISensorReading } from "./models/ISensorReading";
 import { ISensorReadingSeries } from "./models/ISensorReadingSeries";
+import { ChartsMenu } from "./components/ChartsMenu";
 
 declare var require: any
 
@@ -34,32 +35,27 @@ export class Application extends React.Component {
 
     render() {
 
-        if (this.state.error)
-            return (<div class="row"><div class="col-12">{this.state.error}</div></div>);
-
+        const sensorReadings = this.state.sensorReadings;
+        const error = this.state.error;
         const hardwares = this.state.hardwares;
 
-        if (!this.state.sensorReadings || !hardwares)
-            return (<div class="row"><div class="col-12 d-flex justify-content-center text-center">Loading...</div></div>);
+        if (error)
+            return (<div class="row"><div class="col-12">{error}</div></div>);
 
-        const hardwareSwitches = [];
-        for (var i = 0; i < hardwares.length; i++) {
-            if (hardwares[i][1])
-                hardwareSwitches.push(<button value={hardwares[i][0]} class="btn btn-sm btn-primary m-1" onClick={this.handleHardwareSwitch.bind(this, hardwares[i][0])}> {hardwares[i][0]} </button>)
-            else
-                hardwareSwitches.push(<button value={hardwares[i][0]} class="btn btn-sm btn-secondary m-1" onClick={this.handleHardwareSwitch.bind(this, hardwares[i][0])}> {hardwares[i][0]} </button>)
-        }
+        if (!sensorReadings || !hardwares)
+            return (<div class="row"><div class="col-12 d-flex justify-content-center text-center">Loading...</div></div>);
 
         var page = [];
 
-        page.push(<div class="row mb-10"><div class="col-12  justify-content-center">{hardwareSwitches}</div></div>);
+        const chartsMenu = <ChartsMenu hardwares={hardwares} handleClick={this.handleHardwareSwitch.bind(this)} />
+        page.push(chartsMenu)
 
         for (var hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
             if (!hardwares[hardwareId][1])
                 continue;
 
             const hardwareName = hardwares[hardwareId][0];
-            var sensorReadingSerieses = this.state.sensorReadings.filter(sensorReading => sensorReading.hardwareName == hardwareName);
+            var sensorReadingSerieses = sensorReadings.filter(sensorReading => sensorReading.hardwareName == hardwareName);
 
             const yAxises = [];
             const lineCharts = [];

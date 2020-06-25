@@ -148,6 +148,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getResponse = exports.Application = void 0;
 var react_timeseries_charts_1 = __webpack_require__(/*! react-timeseries-charts */ "./node_modules/react-timeseries-charts/lib/entry.js");
 var pondjs_1 = __webpack_require__(/*! pondjs */ "./node_modules/pondjs/lib/entry.js");
+var ChartsMenu_1 = __webpack_require__(/*! ./components/ChartsMenu */ "./components/ChartsMenu.tsx");
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 var ReactDOM = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 var Application = /** @class */ (function (_super) {
@@ -162,34 +163,23 @@ var Application = /** @class */ (function (_super) {
         return _this;
     }
     Application.prototype.render = function () {
-        if (this.state.error)
-            return (React.createElement("div", { class: "row" },
-                React.createElement("div", { class: "col-12" }, this.state.error)));
+        var sensorReadings = this.state.sensorReadings;
+        var error = this.state.error;
         var hardwares = this.state.hardwares;
-        if (!this.state.sensorReadings || !hardwares)
+        if (error)
+            return (React.createElement("div", { class: "row" },
+                React.createElement("div", { class: "col-12" }, error)));
+        if (!sensorReadings || !hardwares)
             return (React.createElement("div", { class: "row" },
                 React.createElement("div", { class: "col-12 d-flex justify-content-center text-center" }, "Loading...")));
-        var hardwareSwitches = [];
-        for (var i = 0; i < hardwares.length; i++) {
-            if (hardwares[i][1])
-                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], class: "btn btn-sm btn-primary m-1", onClick: this.handleHardwareSwitch.bind(this, hardwares[i][0]) },
-                    " ",
-                    hardwares[i][0],
-                    " "));
-            else
-                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], class: "btn btn-sm btn-secondary m-1", onClick: this.handleHardwareSwitch.bind(this, hardwares[i][0]) },
-                    " ",
-                    hardwares[i][0],
-                    " "));
-        }
         var page = [];
-        page.push(React.createElement("div", { class: "row mb-10" },
-            React.createElement("div", { class: "col-12 d-flex justify-content-center" }, hardwareSwitches)));
+        var chartsMenu = React.createElement(ChartsMenu_1.ChartsMenu, { hardwares: hardwares, handleClick: this.handleHardwareSwitch.bind(this) });
+        page.push(chartsMenu);
         var _loop_1 = function () {
             if (!hardwares[hardwareId][1])
                 return "continue";
             var hardwareName = hardwares[hardwareId][0];
-            sensorReadingSerieses = this_1.state.sensorReadings.filter(function (sensorReading) { return sensorReading.hardwareName == hardwareName; });
+            sensorReadingSerieses = sensorReadings.filter(function (sensorReading) { return sensorReading.hardwareName == hardwareName; });
             var yAxises = [];
             var lineCharts = [];
             for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
@@ -208,7 +198,7 @@ var Application = /** @class */ (function (_super) {
                             yAxises,
                             React.createElement(react_timeseries_charts_1.Charts, null, lineCharts))))));
         };
-        var this_1 = this, sensorReadingSerieses, sensorReadingSeries;
+        var sensorReadingSerieses, sensorReadingSeries;
         for (var hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
             _loop_1();
         }
@@ -301,6 +291,62 @@ function getResponse(request) {
 }
 exports.getResponse = getResponse;
 ReactDOM.render(React.createElement(Application, null), document.getElementById('root'));
+
+
+/***/ }),
+
+/***/ "./components/ChartsMenu.tsx":
+/*!***********************************!*\
+  !*** ./components/ChartsMenu.tsx ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChartsMenu = void 0;
+var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+var ChartsMenu = /** @class */ (function (_super) {
+    __extends(ChartsMenu, _super);
+    function ChartsMenu(props) {
+        return _super.call(this, props) || this;
+    }
+    ChartsMenu.prototype.render = function () {
+        var hardwares = this.props.hardwares;
+        var handleClick = this.props.handleClick;
+        var hardwareSwitches = [];
+        for (var i = 0; i < hardwares.length; i++) {
+            if (hardwares[i][1])
+                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], class: "btn btn-sm btn-primary m-1", onClick: function (e) { return handleClick(e.target.value); } },
+                    " ",
+                    hardwares[i][0],
+                    " "));
+            else
+                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], class: "btn btn-sm btn-secondary m-1", onClick: function (e) { return handleClick(e.target.value); } },
+                    " ",
+                    hardwares[i][0],
+                    " "));
+        }
+        return (React.createElement("div", { class: "row mb-10" },
+            React.createElement("div", { class: "col-12 justify-content-center" }, hardwareSwitches)));
+    };
+    return ChartsMenu;
+}(React.Component));
+exports.ChartsMenu = ChartsMenu;
 
 
 /***/ }),
