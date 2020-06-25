@@ -157,7 +157,7 @@ var Application = /** @class */ (function (_super) {
         _this.state = {
             sensorReadings: [],
             error: null,
-            hardwares: []
+            hardwares: null
         };
         return _this;
     }
@@ -167,12 +167,28 @@ var Application = /** @class */ (function (_super) {
                 " ",
                 this.state.error,
                 " "));
-        if (!this.state.sensorReadings)
-            return (React.createElement("div", null, "Loading..."));
-        var charts = [];
         var hardwares = this.state.hardwares;
+        if (!this.state.sensorReadings || !hardwares)
+            return (React.createElement("div", null, "Loading..."));
+        var hardwareSwitches = [];
+        for (var i = 0; i < hardwares.length; i++) {
+            if (hardwares[i][1])
+                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], class: "btn p-2", onClick: this.handleHardwareSwitch.bind(this, hardwares[i][0]) },
+                    " ",
+                    hardwares[i][0],
+                    " "));
+            else
+                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], class: "btn p-2", onClick: this.handleHardwareSwitch.bind(this, hardwares[i][0]) },
+                    " ",
+                    hardwares[i][0],
+                    " "));
+        }
+        var page = [];
+        page.push(React.createElement("div", { class: "row" }, hardwareSwitches));
         var _loop_1 = function () {
-            var hardwareName = hardwares[hardwareId];
+            if (!hardwares[hardwareId][1])
+                return "continue";
+            var hardwareName = hardwares[hardwareId][0];
             sensorReadingSerieses = this_1.state.sensorReadings.filter(function (sensorReading) { return sensorReading.hardwareName == hardwareName; });
             var yAxises = [];
             var lineCharts = [];
@@ -185,16 +201,17 @@ var Application = /** @class */ (function (_super) {
                 yAxises.push(React.createElement(react_timeseries_charts_1.YAxis, { id: sensorReadingSeries.sensor.name, label: sensorReadingSeries.sensor.type, min: min, max: max, width: "50", type: "linear", format: ",.2f" }));
                 lineCharts.push(React.createElement(react_timeseries_charts_1.LineChart, { axis: sensorReadingSeries.sensor.name, series: sensorReadingSeries.readings, column: [sensorReadingSeries.sensor.type] }));
             }
-            charts.push(React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: hardwareName },
-                React.createElement(react_timeseries_charts_1.ChartRow, { height: "500" },
-                    yAxises,
-                    React.createElement(react_timeseries_charts_1.Charts, null, lineCharts))));
+            page.push(React.createElement("div", { class: "row" },
+                React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: hardwareName },
+                    React.createElement(react_timeseries_charts_1.ChartRow, { height: "500" },
+                        yAxises,
+                        React.createElement(react_timeseries_charts_1.Charts, null, lineCharts)))));
         };
         var this_1 = this, sensorReadingSerieses, sensorReadingSeries;
         for (var hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
             _loop_1();
         }
-        return (charts);
+        return (page);
     };
     Application.prototype.componentDidMount = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -240,7 +257,7 @@ var Application = /** @class */ (function (_super) {
                         }
                         this.setState({
                             sensorReadings: sensorReadingsByHardware,
-                            hardwares: hardwares
+                            hardwares: hardwares.map(function (hardware) { return [hardware, true]; })
                         });
                         return [3 /*break*/, 3];
                     case 2:
@@ -254,6 +271,14 @@ var Application = /** @class */ (function (_super) {
         });
     };
     Application.prototype.componentDidUpdate = function () { };
+    Application.prototype.handleHardwareSwitch = function (hardwareName) {
+        var hardwares = this.state.hardwares;
+        var hardwareState = hardwares.find(function (hardware) { return hardware[0] == hardwareName; })[1];
+        hardwares.find(function (hardware) { return hardware[0] == hardwareName; })[1] = !hardwareState;
+        this.setState({
+            hardwares: hardwares
+        });
+    };
     return Application;
 }(React.Component));
 exports.Application = Application;

@@ -16,12 +16,19 @@ var ReactDOM = require('react-dom');
 
 export class Application extends React.Component {
 
+    state: {
+        sensorReadings: ISensorReadingSeries[],
+        error: any,
+        hardwares: [string, boolean][]
+    }
+
     constructor(props) {
         super(props);
+
         this.state = {
-            sensorReadings: [] as ISensorReadingSeries[],
+            sensorReadings: [],
             error: null,
-            hardwares: [] as string[]
+            hardwares: null
         };
     }
 
@@ -30,21 +37,35 @@ export class Application extends React.Component {
         if (this.state.error)
             return (<p> {this.state.error} </p>);
 
-        if (!this.state.sensorReadings)
+        const hardwares = this.state.hardwares;
+
+        if (!this.state.sensorReadings || !hardwares)
             return (<div>Loading...</div>);
 
-        var charts = [];
-        const hardwares = this.state.hardwares as string[];
+        const hardwareSwitches = [];
+        for (var i = 0; i < hardwares.length; i++) {
+            if (hardwares[i][1])
+                hardwareSwitches.push(<button value={hardwares[i][0]} class="btn p-2" onClick={this.handleHardwareSwitch.bind(this, hardwares[i][0])}> {hardwares[i][0]} </button>)
+            else
+                hardwareSwitches.push(<button value={hardwares[i][0]} class="btn p-2" onClick={this.handleHardwareSwitch.bind(this, hardwares[i][0])}> {hardwares[i][0]} </button>)
+        }
+
+        var page = [];
+
+        page.push(<div class="row">{hardwareSwitches}</div>);
 
         for (var hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
-            const hardwareName = hardwares[hardwareId];
+            if (!hardwares[hardwareId][1])
+                continue;
+
+            const hardwareName = hardwares[hardwareId][0];
             var sensorReadingSerieses = this.state.sensorReadings.filter(sensorReading => sensorReading.hardwareName == hardwareName);
 
             const yAxises = [];
             const lineCharts = [];
 
             for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
-                var sensorReadingSeries = sensorReadingSerieses[sensorId] as ISensorReadingSeries;
+                var sensorReadingSeries = sensorReadingSerieses[sensorId];
 
                 //const min = isNaN(Number(sensorReadingSeries.sensor.minValue)) ? sensorReadingSeries.readings.min("value", null) : sensorReadingSeries.sensor.minValue;
                 //const max = isNaN(Number(sensorReadingSeries.sensor.maxValue)) ? sensorReadingSeries.readings.max("value") : sensorReadingSeries.sensor.maxValue;
@@ -62,29 +83,31 @@ export class Application extends React.Component {
                 );
 
                 lineCharts.push(
-                    <LineChart axis={sensorReadingSeries.sensor.name} series = { sensorReadingSeries.readings } column = { [sensorReadingSeries.sensor.type]} />
+                    <LineChart axis={sensorReadingSeries.sensor.name} series={sensorReadingSeries.readings} column={[sensorReadingSeries.sensor.type]} />
                 );
             }
 
-            charts.push(
-                <ChartContainer
-                    timeRange={sensorReadingSerieses[0].readings.timerange()}
-                    width={1500}
-                    format="%Y-%m-%d %H:%M:%S"
-                    timeAxisHeight={130}
-                    timeAxisAngledLabels={true}
-                    title={hardwareName}>
-                    <ChartRow height="500">
-                        { yAxises }
-                        <Charts>
-                            {lineCharts}
-                        </Charts>
-                    </ChartRow>
-                </ChartContainer>
+            page.push(
+                <div class="row">
+                    <ChartContainer
+                        timeRange={sensorReadingSerieses[0].readings.timerange()}
+                        width={1500}
+                        format="%Y-%m-%d %H:%M:%S"
+                        timeAxisHeight={130}
+                        timeAxisAngledLabels={true}
+                        title={hardwareName}>
+                        <ChartRow height="500">
+                            {yAxises}
+                            <Charts>
+                                {lineCharts}
+                            </Charts>
+                        </ChartRow>
+                    </ChartContainer>
+                </div>
             );
         }
 
-        return ( charts );
+        return ( page );
     }
 
     async componentDidMount() {
@@ -131,7 +154,7 @@ export class Application extends React.Component {
 
             this.setState({
                 sensorReadings: sensorReadingsByHardware,
-                hardwares: hardwares
+                hardwares: hardwares.map(hardware => [hardware, true])
             });
         }
         catch (error) {
@@ -141,6 +164,16 @@ export class Application extends React.Component {
     }
 
     componentDidUpdate() { }
+
+    handleHardwareSwitch(hardwareName: string) {
+        const hardwares = this.state.hardwares
+        const hardwareState = hardwares.find(hardware => hardware[0] == hardwareName)[1];
+        hardwares.find(hardware => hardware[0] == hardwareName)[1] = !hardwareState;
+
+        this.setState({
+            hardwares: hardwares
+        });
+    }
 }
 
 export async function getResponse<T>( request: RequestInfo ): Promise<T> {
