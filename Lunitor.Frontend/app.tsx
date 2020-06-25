@@ -35,24 +35,24 @@ export class Application extends React.Component {
     render() {
 
         if (this.state.error)
-            return (<p> {this.state.error} </p>);
+            return (<div class="row"><div class="col-12">{this.state.error}</div></div>);
 
         const hardwares = this.state.hardwares;
 
         if (!this.state.sensorReadings || !hardwares)
-            return (<div>Loading...</div>);
+            return (<div class="row"><div class="col-12 d-flex justify-content-center text-center">Loading...</div></div>);
 
         const hardwareSwitches = [];
         for (var i = 0; i < hardwares.length; i++) {
             if (hardwares[i][1])
-                hardwareSwitches.push(<button value={hardwares[i][0]} class="btn p-2" onClick={this.handleHardwareSwitch.bind(this, hardwares[i][0])}> {hardwares[i][0]} </button>)
+                hardwareSwitches.push(<button value={hardwares[i][0]} class="btn btn-sm btn-primary m-1" onClick={this.handleHardwareSwitch.bind(this, hardwares[i][0])}> {hardwares[i][0]} </button>)
             else
-                hardwareSwitches.push(<button value={hardwares[i][0]} class="btn p-2" onClick={this.handleHardwareSwitch.bind(this, hardwares[i][0])}> {hardwares[i][0]} </button>)
+                hardwareSwitches.push(<button value={hardwares[i][0]} class="btn btn-sm btn-secondary m-1" onClick={this.handleHardwareSwitch.bind(this, hardwares[i][0])}> {hardwares[i][0]} </button>)
         }
 
         var page = [];
 
-        page.push(<div class="row">{hardwareSwitches}</div>);
+        page.push(<div class="row mb-10"><div class="col-12  justify-content-center">{hardwareSwitches}</div></div>);
 
         for (var hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
             if (!hardwares[hardwareId][1])
@@ -89,20 +89,22 @@ export class Application extends React.Component {
 
             page.push(
                 <div class="row">
-                    <ChartContainer
-                        timeRange={sensorReadingSerieses[0].readings.timerange()}
-                        width={1500}
-                        format="%Y-%m-%d %H:%M:%S"
-                        timeAxisHeight={130}
-                        timeAxisAngledLabels={true}
-                        title={hardwareName}>
-                        <ChartRow height="500">
-                            {yAxises}
-                            <Charts>
-                                {lineCharts}
-                            </Charts>
-                        </ChartRow>
-                    </ChartContainer>
+                    <div class="col-12 d-flex justify-content-center ">
+                        <ChartContainer
+                            timeRange={sensorReadingSerieses[0].readings.timerange()}
+                            width={1500}
+                            format="%Y-%m-%d %H:%M:%S"
+                            timeAxisHeight={130}
+                            timeAxisAngledLabels={true}
+                            title={hardwareName}>
+                            <ChartRow height="500">
+                                {yAxises}
+                                <Charts>
+                                    {lineCharts}
+                                </Charts>
+                            </ChartRow>
+                            </ChartContainer>
+                        </div>
                 </div>
             );
         }

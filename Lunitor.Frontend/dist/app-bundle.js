@@ -163,28 +163,28 @@ var Application = /** @class */ (function (_super) {
     }
     Application.prototype.render = function () {
         if (this.state.error)
-            return (React.createElement("p", null,
-                " ",
-                this.state.error,
-                " "));
+            return (React.createElement("div", { class: "row" },
+                React.createElement("div", { class: "col-12" }, this.state.error)));
         var hardwares = this.state.hardwares;
         if (!this.state.sensorReadings || !hardwares)
-            return (React.createElement("div", null, "Loading..."));
+            return (React.createElement("div", { class: "row" },
+                React.createElement("div", { class: "col-12 d-flex justify-content-center text-center" }, "Loading...")));
         var hardwareSwitches = [];
         for (var i = 0; i < hardwares.length; i++) {
             if (hardwares[i][1])
-                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], class: "btn p-2", onClick: this.handleHardwareSwitch.bind(this, hardwares[i][0]) },
+                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], class: "btn btn-sm btn-primary m-1", onClick: this.handleHardwareSwitch.bind(this, hardwares[i][0]) },
                     " ",
                     hardwares[i][0],
                     " "));
             else
-                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], class: "btn p-2", onClick: this.handleHardwareSwitch.bind(this, hardwares[i][0]) },
+                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], class: "btn btn-sm btn-secondary m-1", onClick: this.handleHardwareSwitch.bind(this, hardwares[i][0]) },
                     " ",
                     hardwares[i][0],
                     " "));
         }
         var page = [];
-        page.push(React.createElement("div", { class: "row" }, hardwareSwitches));
+        page.push(React.createElement("div", { class: "row mb-10" },
+            React.createElement("div", { class: "col-12 d-flex justify-content-center" }, hardwareSwitches)));
         var _loop_1 = function () {
             if (!hardwares[hardwareId][1])
                 return "continue";
@@ -202,10 +202,11 @@ var Application = /** @class */ (function (_super) {
                 lineCharts.push(React.createElement(react_timeseries_charts_1.LineChart, { axis: sensorReadingSeries.sensor.name, series: sensorReadingSeries.readings, column: [sensorReadingSeries.sensor.type] }));
             }
             page.push(React.createElement("div", { class: "row" },
-                React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: hardwareName },
-                    React.createElement(react_timeseries_charts_1.ChartRow, { height: "500" },
-                        yAxises,
-                        React.createElement(react_timeseries_charts_1.Charts, null, lineCharts)))));
+                React.createElement("div", { class: "col-12 d-flex justify-content-center " },
+                    React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: hardwareName },
+                        React.createElement(react_timeseries_charts_1.ChartRow, { height: "500" },
+                            yAxises,
+                            React.createElement(react_timeseries_charts_1.Charts, null, lineCharts))))));
         };
         var this_1 = this, sensorReadingSerieses, sensorReadingSeries;
         for (var hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
