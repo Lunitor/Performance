@@ -12,5 +12,10 @@
     "node_modules"
   ],
   "files": [
-    "app.tsx"
-  ]}
+    "app.tsx",
+    "models/IHardware.ts",
+    "models/ISensor.ts",
+    "models/ISensorReading.ts",
+    "models/ISensorReadingSeries.ts"
+  ]
+}

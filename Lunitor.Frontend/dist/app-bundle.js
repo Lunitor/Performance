@@ -162,8 +162,6 @@ var Application = /** @class */ (function (_super) {
         return _this;
     }
     Application.prototype.render = function () {
-        var _this = this;
-        var _a, _b;
         if (this.state.error)
             return (React.createElement("p", null,
                 " ",
@@ -172,16 +170,29 @@ var Application = /** @class */ (function (_super) {
         if (!this.state.sensorReadings)
             return (React.createElement("div", null, "Loading..."));
         var charts = [];
-        for (var hardwareId = 0; hardwareId < this.state.sensorReadings.length; hardwareId++) {
-            var hardwareSensors = this.state.sensorReadings.filter(function (sensorReading) { return sensorReading.hardwareName == _this.state.hardwares[hardwareId]; });
-            for (var sensorId = 0; sensorId < hardwareSensors.length; sensorId++) {
-                var sensorReadings = hardwareSensors[sensorId];
-                charts.push(React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadings.readings.timerange(), width: 1000, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: sensorReadings.hardwareName + " " + sensorReadings.sensor.name },
-                    React.createElement(react_timeseries_charts_1.ChartRow, { height: "500" },
-                        React.createElement(react_timeseries_charts_1.YAxis, { id: "axis1", label: sensorReadings.sensor.type, min: (_a = sensorReadings.sensor.minValue) !== null && _a !== void 0 ? _a : sensorReadings.readings.min("value"), max: (_b = sensorReadings.sensor.maxValue) !== null && _b !== void 0 ? _b : sensorReadings.readings.max("value"), width: "100", type: "linear", format: ",.2f" }),
-                        React.createElement(react_timeseries_charts_1.Charts, null,
-                            React.createElement(react_timeseries_charts_1.LineChart, { axis: "axis1", series: sensorReadings.readings, column: [sensorReadings.sensor.type] })))));
+        var hardwares = this.state.hardwares;
+        var _loop_1 = function () {
+            var hardwareName = hardwares[hardwareId];
+            sensorReadingSerieses = this_1.state.sensorReadings.filter(function (sensorReading) { return sensorReading.hardwareName == hardwareName; });
+            var yAxises = [];
+            var lineCharts = [];
+            for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
+                sensorReadingSeries = sensorReadingSerieses[sensorId];
+                //const min = isNaN(Number(sensorReadingSeries.sensor.minValue)) ? sensorReadingSeries.readings.min("value", null) : sensorReadingSeries.sensor.minValue;
+                //const max = isNaN(Number(sensorReadingSeries.sensor.maxValue)) ? sensorReadingSeries.readings.max("value") : sensorReadingSeries.sensor.maxValue;
+                var min = sensorReadingSeries.readings.min("value", function (filter) { return 0; });
+                var max = sensorReadingSeries.readings.max("value");
+                yAxises.push(React.createElement(react_timeseries_charts_1.YAxis, { id: sensorReadingSeries.sensor.name, label: sensorReadingSeries.sensor.type, min: min, max: max, width: "50", type: "linear", format: ",.2f" }));
+                lineCharts.push(React.createElement(react_timeseries_charts_1.LineChart, { axis: sensorReadingSeries.sensor.name, series: sensorReadingSeries.readings, column: [sensorReadingSeries.sensor.type] }));
             }
+            charts.push(React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: hardwareName },
+                React.createElement(react_timeseries_charts_1.ChartRow, { height: "500" },
+                    yAxises,
+                    React.createElement(react_timeseries_charts_1.Charts, null, lineCharts))));
+        };
+        var this_1 = this, sensorReadingSerieses, sensorReadingSeries;
+        for (var hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
+            _loop_1();
         }
         return (charts);
     };

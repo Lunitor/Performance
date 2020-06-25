@@ -7,6 +7,7 @@ import {
 } from "react-timeseries-charts";
 import { TimeSeries } from "pondjs";
 import { ISensorReading } from "./models/ISensorReading";
+import { ISensorReadingSeries } from "./models/ISensorReadingSeries";
 
 declare var require: any
 
@@ -18,9 +19,9 @@ export class Application extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            sensorReadings: [],
+            sensorReadings: [] as ISensorReadingSeries[],
             error: null,
-            hardwares: []
+            hardwares: [] as string[]
         };
     }
 
@@ -33,39 +34,55 @@ export class Application extends React.Component {
             return (<div>Loading...</div>);
 
         var charts = [];
+        const hardwares = this.state.hardwares as string[];
 
-        for (var hardwareId = 0; hardwareId < this.state.sensorReadings.length; hardwareId++) {
-            var hardwareSensors = this.state.sensorReadings.filter(sensorReading => sensorReading.hardwareName == this.state.hardwares[hardwareId]);
+        for (var hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
+            const hardwareName = hardwares[hardwareId];
+            var sensorReadingSerieses = this.state.sensorReadings.filter(sensorReading => sensorReading.hardwareName == hardwareName);
 
-            for (var sensorId = 0; sensorId < hardwareSensors.length; sensorId++) {
-                var sensorReadings = hardwareSensors[sensorId];
-                charts.push(
-                    <ChartContainer
-                        timeRange={sensorReadings.readings.timerange()}
-                        width={1000}
-                        format="%Y-%m-%d %H:%M:%S"
-                        timeAxisHeight={130}
-                        timeAxisAngledLabels={true}
-                        title={sensorReadings.hardwareName + " " + sensorReadings.sensor.name}>
-                        <ChartRow height="500">
-                            <YAxis id="axis1"
-                                label={sensorReadings.sensor.type}
-                                min={sensorReadings.sensor.minValue ?? sensorReadings.readings.min("value")}
-                                max={sensorReadings.sensor.maxValue ?? sensorReadings.readings.max("value")}
-                                width="100"
-                                type="linear"
-                                format=",.2f" />
-                            <Charts>
-                                <LineChart axis="axis1" series={sensorReadings.readings} column={[sensorReadings.sensor.type]} />
-                            </Charts>
-                        </ChartRow>
-                    </ChartContainer>
+            const yAxises = [];
+            const lineCharts = [];
+
+            for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
+                var sensorReadingSeries = sensorReadingSerieses[sensorId] as ISensorReadingSeries;
+
+                //const min = isNaN(Number(sensorReadingSeries.sensor.minValue)) ? sensorReadingSeries.readings.min("value", null) : sensorReadingSeries.sensor.minValue;
+                //const max = isNaN(Number(sensorReadingSeries.sensor.maxValue)) ? sensorReadingSeries.readings.max("value") : sensorReadingSeries.sensor.maxValue;
+                const min = sensorReadingSeries.readings.min("value", filter => 0);
+                const max = sensorReadingSeries.readings.max("value");
+
+                yAxises.push(
+                    <YAxis id={sensorReadingSeries.sensor.name}
+                        label={sensorReadingSeries.sensor.type}
+                        min={min}
+                        max={max}
+                        width="50"
+                        type="linear"
+                        format=",.2f" />
                 );
 
+                lineCharts.push(
+                    <LineChart axis={sensorReadingSeries.sensor.name} series = { sensorReadingSeries.readings } column = { [sensorReadingSeries.sensor.type]} />
+                );
             }
+
+            charts.push(
+                <ChartContainer
+                    timeRange={sensorReadingSerieses[0].readings.timerange()}
+                    width={1500}
+                    format="%Y-%m-%d %H:%M:%S"
+                    timeAxisHeight={130}
+                    timeAxisAngledLabels={true}
+                    title={hardwareName}>
+                    <ChartRow height="500">
+                        { yAxises }
+                        <Charts>
+                            {lineCharts}
+                        </Charts>
+                    </ChartRow>
+                </ChartContainer>
+            );
         }
-
-
 
         return ( charts );
     }
@@ -121,38 +138,6 @@ export class Application extends React.Component {
             console.log(error);
             this.setState({ error: error });
         }
-
-        //fetch('/sensorreadings')
-        //    .then(res => res.json())
-        //    .then((data) => {
-        //        this.setState({
-        //            sensorReadings: data,
-        //            series: new TimeSeries({
-        //                name: "sensor readings",
-        //                columns: ["time", "value"],
-        //                points: data
-        //                    .filter((sensorReading) => (sensorReading.hardware.name == "WiFi" && sensorReading.sensor.name == "Download Speed"))
-        //                    .sort((a, b) => {
-        //                        if (a.timeStamp == b.timeStamp)
-        //                            return 0;
-        //                        else if (a.timeStamp < b.timeStamp)
-        //                            return -1;
-        //                        else if (a.timeStamp > b.timeStamp)
-        //                            return 1;
-        //                        })
-        //                    .map((sensorReading) => {
-        //                    return [
-        //                        (new Date(sensorReading.timeStamp)).getTime(),
-        //                        sensorReading.value
-        //                    ];
-        //                })
-        //            })
-        //        });
-        //    })
-        //    .catch((error)=>{
-        //        console.log(error);
-        //        this.setState({ error: error });
-        //    })
     }
 
     componentDidUpdate() { }
