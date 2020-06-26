@@ -6,7 +6,7 @@
     "noEmitOnError": true,
     "removeComments": false,
     "sourceMap": true,
-    "target": "es5"
+    "target": "es2015"
   },
   "exclude": [
     "node_modules"
@@ -16,6 +16,8 @@
     "models/IHardware.ts",
     "models/ISensor.ts",
     "models/ISensorReading.ts",
-    "models/ISensorReadingSeries.ts"
+    "models/ISensorReadingSeries.ts",
+    "components/ChartsMenu.tsx",
+    "components/HardwareCharts.tsx"
   ]
 }

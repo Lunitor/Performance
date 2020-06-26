@@ -1,9 +1,11 @@
-declare var require: any
+import * as React from "react";
 
-var React = require('react');
+type ChartsMenuProps = {
+    hardwares: [string, boolean][],
+    handleClick: (hardwareName: string) => void
+};
 
-
-export class ChartsMenu extends React.Component {
+export class ChartsMenu extends React.Component<ChartsMenuProps> {
 
     constructor(props) {
         super(props)
@@ -16,14 +18,14 @@ export class ChartsMenu extends React.Component {
         const hardwareSwitches = [];
         for (var i = 0; i < hardwares.length; i++) {
             if (hardwares[i][1])
-                hardwareSwitches.push(<button value={hardwares[i][0]} class="btn btn-sm btn-primary m-1" onClick={(e) => handleClick(e.target.value)}> {hardwares[i][0]} </button>)
+                hardwareSwitches.push(<button value={hardwares[i][0]} className="btn btn-sm btn-primary m-1" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e.currentTarget.value)}> {hardwares[i][0]} </button>)
             else
-                hardwareSwitches.push(<button value={hardwares[i][0]} class="btn btn-sm btn-secondary m-1" onClick={(e) => handleClick(e.target.value)}> {hardwares[i][0]} </button>)
+                hardwareSwitches.push(<button value={hardwares[i][0]} className="btn btn-sm btn-secondary m-1" onClick={(e: React.MouseEvent<HTMLInputElement>) => handleClick(e.currentTarget.value)}> {hardwares[i][0]} </button>)
         }
 
         return (
-            <div class="row mb-10">
-                <div class="col-12 justify-content-center">
+            <div className="row mb-10">
+                <div className="col-12 justify-content-center">
                     {hardwareSwitches}
                 </div>
             </div>

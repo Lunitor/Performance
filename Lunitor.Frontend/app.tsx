@@ -1,19 +1,12 @@
-import {
-    Charts,
-    ChartContainer,
-    ChartRow,
-    YAxis,
-    LineChart
-} from "react-timeseries-charts";
+import * as React from "react";
+import * as ReactDOM from 'react-dom';
+
 import { TimeSeries } from "pondjs";
 import { ISensorReading } from "./models/ISensorReading";
 import { ISensorReadingSeries } from "./models/ISensorReadingSeries";
 import { ChartsMenu } from "./components/ChartsMenu";
+import { HardwareCharts } from "./components/HardwareCharts";
 
-declare var require: any
-
-var React = require('react');
-var ReactDOM = require('react-dom');
 
 export class Application extends React.Component {
 
@@ -40,70 +33,18 @@ export class Application extends React.Component {
         const hardwares = this.state.hardwares;
 
         if (error)
-            return (<div class="row"><div class="col-12">{error}</div></div>);
+            return (<div className="row"><div className="col-12">{error}</div></div>);
 
         if (!sensorReadings || !hardwares)
-            return (<div class="row"><div class="col-12 d-flex justify-content-center text-center">Loading...</div></div>);
+            return (<div className="row"><div className="col-12 d-flex justify-content-center text-center">Loading...</div></div>);
 
         var page = [];
 
-        const chartsMenu = <ChartsMenu hardwares={hardwares} handleClick={this.handleHardwareSwitch.bind(this)} />
-        page.push(chartsMenu)
+        const chartsMenu = <ChartsMenu hardwares={hardwares} handleClick={this.handleHardwareSwitch.bind(this)} />;
+        page.push(chartsMenu);
 
-        for (var hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
-            if (!hardwares[hardwareId][1])
-                continue;
-
-            const hardwareName = hardwares[hardwareId][0];
-            var sensorReadingSerieses = sensorReadings.filter(sensorReading => sensorReading.hardwareName == hardwareName);
-
-            const yAxises = [];
-            const lineCharts = [];
-
-            for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
-                var sensorReadingSeries = sensorReadingSerieses[sensorId];
-
-                //const min = isNaN(Number(sensorReadingSeries.sensor.minValue)) ? sensorReadingSeries.readings.min("value", null) : sensorReadingSeries.sensor.minValue;
-                //const max = isNaN(Number(sensorReadingSeries.sensor.maxValue)) ? sensorReadingSeries.readings.max("value") : sensorReadingSeries.sensor.maxValue;
-                const min = sensorReadingSeries.readings.min("value", filter => 0);
-                const max = sensorReadingSeries.readings.max("value");
-
-                yAxises.push(
-                    <YAxis id={sensorReadingSeries.sensor.name}
-                        label={sensorReadingSeries.sensor.type}
-                        min={min}
-                        max={max}
-                        width="50"
-                        type="linear"
-                        format=",.2f" />
-                );
-
-                lineCharts.push(
-                    <LineChart axis={sensorReadingSeries.sensor.name} series={sensorReadingSeries.readings} column={[sensorReadingSeries.sensor.type]} />
-                );
-            }
-
-            page.push(
-                <div class="row">
-                    <div class="col-12 d-flex justify-content-center ">
-                        <ChartContainer
-                            timeRange={sensorReadingSerieses[0].readings.timerange()}
-                            width={1500}
-                            format="%Y-%m-%d %H:%M:%S"
-                            timeAxisHeight={130}
-                            timeAxisAngledLabels={true}
-                            title={hardwareName}>
-                            <ChartRow height="500">
-                                {yAxises}
-                                <Charts>
-                                    {lineCharts}
-                                </Charts>
-                            </ChartRow>
-                            </ChartContainer>
-                        </div>
-                </div>
-            );
-        }
+        const charts = <HardwareCharts sensorReadings={sensorReadings} hardwares={hardwares} />
+        page.push(charts);
 
         return ( page );
     }
@@ -117,37 +58,9 @@ export class Application extends React.Component {
             var sensorReadingsByHardware = [];
 
             for (var hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
-                var sensorNames = Array.from(new Set(data
-                    .filter(sensorreading => sensorreading.hardware.name == hardwares[hardwareId])
-                    .map(sensorreading => sensorreading.sensor.name)));
+                var sensorNames = this.getSensorNames(data, hardwares, hardwareId);
 
-                for (var sensorId = 0; sensorId < sensorNames.length; sensorId++) {
-                    sensorReadingsByHardware.push(
-                        {
-                            hardwareName: hardwares[hardwareId],
-                            sensor: data.find(sensorreading => sensorreading.hardware.name == hardwares[hardwareId] && sensorreading.sensor.name == sensorNames[sensorId]).sensor,
-                            readings: new TimeSeries({
-                                name: hardwares[hardwareId] + " " + sensorNames[sensorId],
-                                columns: ["time", "value"],
-                                points: data.filter(reading => reading.hardware.name == hardwares[hardwareId] && reading.sensor.name == sensorNames[sensorId])
-                                    .sort((a, b) => {
-                                        if (a.timeStamp == b.timeStamp)
-                                            return 0;
-                                        else if (a.timeStamp < b.timeStamp)
-                                            return -1;
-                                        else if (a.timeStamp > b.timeStamp)
-                                            return 1;
-                                        })
-                                    .map(reading => {
-                                        return [
-                                            (new Date(reading.timeStamp)).getTime(),
-                                            reading.value
-                                        ];
-                                    })
-                            })
-                        }
-                    );
-                }
+                this.fillSensorReadingsByHardware(sensorNames, sensorReadingsByHardware, hardwares, hardwareId, data);
             }
 
             this.setState({
@@ -161,8 +74,6 @@ export class Application extends React.Component {
         }
     }
 
-    componentDidUpdate() { }
-
     handleHardwareSwitch(hardwareName: string) {
         const hardwares = this.state.hardwares
         const hardwareState = hardwares.find(hardware => hardware[0] == hardwareName)[1];
@@ -171,6 +82,50 @@ export class Application extends React.Component {
         this.setState({
             hardwares: hardwares
         });
+    }
+
+    private fillSensorReadingsByHardware(sensorNames: string[], sensorReadingsByHardware: any[], hardwares: string[], hardwareId: number, data: ISensorReading[]) {
+        for (var sensorId = 0; sensorId < sensorNames.length; sensorId++) {
+            sensorReadingsByHardware.push(
+                {
+                    hardwareName: hardwares[hardwareId],
+                    sensor: this.getSensor(data, hardwares, hardwareId, sensorNames, sensorId),
+                    readings: new TimeSeries({
+                        name: hardwares[hardwareId] + " " + sensorNames[sensorId],
+                        columns: ["time", "value"],
+                        points: this.getSensorReadingAsTimeValuePairs(data, hardwares, hardwareId, sensorNames, sensorId)
+                    })
+                }
+            );
+        }
+    }
+
+    private getSensorReadingAsTimeValuePairs(data: ISensorReading[], hardwares: string[], hardwareId: number, sensorNames: string[], sensorId: number): any[] {
+        return data.filter(reading => reading.hardware.name == hardwares[hardwareId] && reading.sensor.name == sensorNames[sensorId])
+            .sort((a, b) => {
+                if (a.timeStamp == b.timeStamp)
+                    return 0;
+                else if (a.timeStamp < b.timeStamp)
+                    return -1;
+                else if (a.timeStamp > b.timeStamp)
+                    return 1;
+            })
+            .map(reading => {
+                return [
+                    (new Date(reading.timeStamp)).getTime(),
+                    reading.value
+                ];
+            });
+    }
+
+    private getSensor(data: ISensorReading[], hardwares: string[], hardwareId: number, sensorNames: string[], sensorId: number) {
+        return data.find(sensorreading => sensorreading.hardware.name == hardwares[hardwareId] && sensorreading.sensor.name == sensorNames[sensorId]).sensor;
+    }
+
+    private getSensorNames(data: ISensorReading[], hardwares: string[], hardwareId: number) {
+        return Array.from(new Set(data
+            .filter(sensorreading => sensorreading.hardware.name == hardwares[hardwareId])
+            .map(sensorreading => sensorreading.sensor.name)));
     }
 }
 

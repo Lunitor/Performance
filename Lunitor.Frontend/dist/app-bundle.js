@@ -95,19 +95,6 @@
 
 "use strict";
 
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -117,176 +104,114 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getResponse = exports.Application = void 0;
-var react_timeseries_charts_1 = __webpack_require__(/*! react-timeseries-charts */ "./node_modules/react-timeseries-charts/lib/entry.js");
-var pondjs_1 = __webpack_require__(/*! pondjs */ "./node_modules/pondjs/lib/entry.js");
-var ChartsMenu_1 = __webpack_require__(/*! ./components/ChartsMenu */ "./components/ChartsMenu.tsx");
-var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-var ReactDOM = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-var Application = /** @class */ (function (_super) {
-    __extends(Application, _super);
-    function Application(props) {
-        var _this = _super.call(this, props) || this;
-        _this.state = {
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const ReactDOM = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+const pondjs_1 = __webpack_require__(/*! pondjs */ "./node_modules/pondjs/lib/entry.js");
+const ChartsMenu_1 = __webpack_require__(/*! ./components/ChartsMenu */ "./components/ChartsMenu.tsx");
+const HardwareCharts_1 = __webpack_require__(/*! ./components/HardwareCharts */ "./components/HardwareCharts.tsx");
+class Application extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             sensorReadings: [],
             error: null,
             hardwares: null
         };
-        return _this;
     }
-    Application.prototype.render = function () {
-        var sensorReadings = this.state.sensorReadings;
-        var error = this.state.error;
-        var hardwares = this.state.hardwares;
+    render() {
+        const sensorReadings = this.state.sensorReadings;
+        const error = this.state.error;
+        const hardwares = this.state.hardwares;
         if (error)
-            return (React.createElement("div", { class: "row" },
-                React.createElement("div", { class: "col-12" }, error)));
+            return (React.createElement("div", { className: "row" },
+                React.createElement("div", { className: "col-12" }, error)));
         if (!sensorReadings || !hardwares)
-            return (React.createElement("div", { class: "row" },
-                React.createElement("div", { class: "col-12 d-flex justify-content-center text-center" }, "Loading...")));
+            return (React.createElement("div", { className: "row" },
+                React.createElement("div", { className: "col-12 d-flex justify-content-center text-center" }, "Loading...")));
         var page = [];
-        var chartsMenu = React.createElement(ChartsMenu_1.ChartsMenu, { hardwares: hardwares, handleClick: this.handleHardwareSwitch.bind(this) });
+        const chartsMenu = React.createElement(ChartsMenu_1.ChartsMenu, { hardwares: hardwares, handleClick: this.handleHardwareSwitch.bind(this) });
         page.push(chartsMenu);
-        var _loop_1 = function () {
-            if (!hardwares[hardwareId][1])
-                return "continue";
-            var hardwareName = hardwares[hardwareId][0];
-            sensorReadingSerieses = sensorReadings.filter(function (sensorReading) { return sensorReading.hardwareName == hardwareName; });
-            var yAxises = [];
-            var lineCharts = [];
-            for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
-                sensorReadingSeries = sensorReadingSerieses[sensorId];
-                //const min = isNaN(Number(sensorReadingSeries.sensor.minValue)) ? sensorReadingSeries.readings.min("value", null) : sensorReadingSeries.sensor.minValue;
-                //const max = isNaN(Number(sensorReadingSeries.sensor.maxValue)) ? sensorReadingSeries.readings.max("value") : sensorReadingSeries.sensor.maxValue;
-                var min = sensorReadingSeries.readings.min("value", function (filter) { return 0; });
-                var max = sensorReadingSeries.readings.max("value");
-                yAxises.push(React.createElement(react_timeseries_charts_1.YAxis, { id: sensorReadingSeries.sensor.name, label: sensorReadingSeries.sensor.type, min: min, max: max, width: "50", type: "linear", format: ",.2f" }));
-                lineCharts.push(React.createElement(react_timeseries_charts_1.LineChart, { axis: sensorReadingSeries.sensor.name, series: sensorReadingSeries.readings, column: [sensorReadingSeries.sensor.type] }));
-            }
-            page.push(React.createElement("div", { class: "row" },
-                React.createElement("div", { class: "col-12 d-flex justify-content-center " },
-                    React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: hardwareName },
-                        React.createElement(react_timeseries_charts_1.ChartRow, { height: "500" },
-                            yAxises,
-                            React.createElement(react_timeseries_charts_1.Charts, null, lineCharts))))));
-        };
-        var sensorReadingSerieses, sensorReadingSeries;
-        for (var hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
-            _loop_1();
-        }
+        const charts = React.createElement(HardwareCharts_1.HardwareCharts, { sensorReadings: sensorReadings, hardwares: hardwares });
+        page.push(charts);
         return (page);
-    };
-    Application.prototype.componentDidMount = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var data, hardwares, sensorReadingsByHardware, hardwareId, sensorNames, sensorId, error_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, getResponse('/sensorreadings')];
-                    case 1:
-                        data = _a.sent();
-                        hardwares = Array.from(new Set(data.map(function (sensorreading) { return sensorreading.hardware.name; })));
-                        sensorReadingsByHardware = [];
-                        for (hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
-                            sensorNames = Array.from(new Set(data
-                                .filter(function (sensorreading) { return sensorreading.hardware.name == hardwares[hardwareId]; })
-                                .map(function (sensorreading) { return sensorreading.sensor.name; })));
-                            for (sensorId = 0; sensorId < sensorNames.length; sensorId++) {
-                                sensorReadingsByHardware.push({
-                                    hardwareName: hardwares[hardwareId],
-                                    sensor: data.find(function (sensorreading) { return sensorreading.hardware.name == hardwares[hardwareId] && sensorreading.sensor.name == sensorNames[sensorId]; }).sensor,
-                                    readings: new pondjs_1.TimeSeries({
-                                        name: hardwares[hardwareId] + " " + sensorNames[sensorId],
-                                        columns: ["time", "value"],
-                                        points: data.filter(function (reading) { return reading.hardware.name == hardwares[hardwareId] && reading.sensor.name == sensorNames[sensorId]; })
-                                            .sort(function (a, b) {
-                                            if (a.timeStamp == b.timeStamp)
-                                                return 0;
-                                            else if (a.timeStamp < b.timeStamp)
-                                                return -1;
-                                            else if (a.timeStamp > b.timeStamp)
-                                                return 1;
-                                        })
-                                            .map(function (reading) {
-                                            return [
-                                                (new Date(reading.timeStamp)).getTime(),
-                                                reading.value
-                                            ];
-                                        })
-                                    })
-                                });
-                            }
-                        }
-                        this.setState({
-                            sensorReadings: sensorReadingsByHardware,
-                            hardwares: hardwares.map(function (hardware) { return [hardware, true]; })
-                        });
-                        return [3 /*break*/, 3];
-                    case 2:
-                        error_1 = _a.sent();
-                        console.log(error_1);
-                        this.setState({ error: error_1 });
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+    }
+    componentDidMount() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const data = yield getResponse('/sensorreadings');
+                var hardwares = Array.from(new Set(data.map(sensorreading => sensorreading.hardware.name)));
+                var sensorReadingsByHardware = [];
+                for (var hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
+                    var sensorNames = this.getSensorNames(data, hardwares, hardwareId);
+                    this.fillSensorReadingsByHardware(sensorNames, sensorReadingsByHardware, hardwares, hardwareId, data);
                 }
-            });
+                this.setState({
+                    sensorReadings: sensorReadingsByHardware,
+                    hardwares: hardwares.map(hardware => [hardware, true])
+                });
+            }
+            catch (error) {
+                console.log(error);
+                this.setState({ error: error });
+            }
         });
-    };
-    Application.prototype.componentDidUpdate = function () { };
-    Application.prototype.handleHardwareSwitch = function (hardwareName) {
-        var hardwares = this.state.hardwares;
-        var hardwareState = hardwares.find(function (hardware) { return hardware[0] == hardwareName; })[1];
-        hardwares.find(function (hardware) { return hardware[0] == hardwareName; })[1] = !hardwareState;
+    }
+    //componentDidUpdate() { }
+    handleHardwareSwitch(hardwareName) {
+        const hardwares = this.state.hardwares;
+        const hardwareState = hardwares.find(hardware => hardware[0] == hardwareName)[1];
+        hardwares.find(hardware => hardware[0] == hardwareName)[1] = !hardwareState;
         this.setState({
             hardwares: hardwares
         });
-    };
-    return Application;
-}(React.Component));
+    }
+    fillSensorReadingsByHardware(sensorNames, sensorReadingsByHardware, hardwares, hardwareId, data) {
+        for (var sensorId = 0; sensorId < sensorNames.length; sensorId++) {
+            sensorReadingsByHardware.push({
+                hardwareName: hardwares[hardwareId],
+                sensor: this.getSensor(data, hardwares, hardwareId, sensorNames, sensorId),
+                readings: new pondjs_1.TimeSeries({
+                    name: hardwares[hardwareId] + " " + sensorNames[sensorId],
+                    columns: ["time", "value"],
+                    points: this.getSensorReadingAsTimeValuePairs(data, hardwares, hardwareId, sensorNames, sensorId)
+                })
+            });
+        }
+    }
+    getSensorReadingAsTimeValuePairs(data, hardwares, hardwareId, sensorNames, sensorId) {
+        return data.filter(reading => reading.hardware.name == hardwares[hardwareId] && reading.sensor.name == sensorNames[sensorId])
+            .sort((a, b) => {
+            if (a.timeStamp == b.timeStamp)
+                return 0;
+            else if (a.timeStamp < b.timeStamp)
+                return -1;
+            else if (a.timeStamp > b.timeStamp)
+                return 1;
+        })
+            .map(reading => {
+            return [
+                (new Date(reading.timeStamp)).getTime(),
+                reading.value
+            ];
+        });
+    }
+    getSensor(data, hardwares, hardwareId, sensorNames, sensorId) {
+        return data.find(sensorreading => sensorreading.hardware.name == hardwares[hardwareId] && sensorreading.sensor.name == sensorNames[sensorId]).sensor;
+    }
+    getSensorNames(data, hardwares, hardwareId) {
+        return Array.from(new Set(data
+            .filter(sensorreading => sensorreading.hardware.name == hardwares[hardwareId])
+            .map(sensorreading => sensorreading.sensor.name)));
+    }
+}
 exports.Application = Application;
 function getResponse(request) {
-    return __awaiter(this, void 0, void 0, function () {
-        var response, data;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, fetch(request)];
-                case 1:
-                    response = _a.sent();
-                    return [4 /*yield*/, response.json()];
-                case 2:
-                    data = _a.sent();
-                    return [2 /*return*/, data];
-            }
-        });
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch(request);
+        const data = yield response.json();
+        return data;
     });
 }
 exports.getResponse = getResponse;
@@ -304,49 +229,83 @@ ReactDOM.render(React.createElement(Application, null), document.getElementById(
 
 "use strict";
 
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartsMenu = void 0;
-var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-var ChartsMenu = /** @class */ (function (_super) {
-    __extends(ChartsMenu, _super);
-    function ChartsMenu(props) {
-        return _super.call(this, props) || this;
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+class ChartsMenu extends React.Component {
+    constructor(props) {
+        super(props);
     }
-    ChartsMenu.prototype.render = function () {
-        var hardwares = this.props.hardwares;
-        var handleClick = this.props.handleClick;
-        var hardwareSwitches = [];
+    render() {
+        const hardwares = this.props.hardwares;
+        const handleClick = this.props.handleClick;
+        const hardwareSwitches = [];
         for (var i = 0; i < hardwares.length; i++) {
             if (hardwares[i][1])
-                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], class: "btn btn-sm btn-primary m-1", onClick: function (e) { return handleClick(e.target.value); } },
+                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], className: "btn btn-sm btn-primary m-1", onClick: (e) => handleClick(e.currentTarget.value) },
                     " ",
                     hardwares[i][0],
                     " "));
             else
-                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], class: "btn btn-sm btn-secondary m-1", onClick: function (e) { return handleClick(e.target.value); } },
+                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], className: "btn btn-sm btn-secondary m-1", onClick: (e) => handleClick(e.currentTarget.value) },
                     " ",
                     hardwares[i][0],
                     " "));
         }
-        return (React.createElement("div", { class: "row mb-10" },
-            React.createElement("div", { class: "col-12 justify-content-center" }, hardwareSwitches)));
-    };
-    return ChartsMenu;
-}(React.Component));
+        return (React.createElement("div", { className: "row mb-10" },
+            React.createElement("div", { className: "col-12 justify-content-center" }, hardwareSwitches)));
+    }
+}
 exports.ChartsMenu = ChartsMenu;
+
+
+/***/ }),
+
+/***/ "./components/HardwareCharts.tsx":
+/*!***************************************!*\
+  !*** ./components/HardwareCharts.tsx ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HardwareCharts = void 0;
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const react_timeseries_charts_1 = __webpack_require__(/*! react-timeseries-charts */ "./node_modules/react-timeseries-charts/lib/entry.js");
+class HardwareCharts extends React.Component {
+    render() {
+        const sensorReadings = this.props.sensorReadings;
+        const hardwares = this.props.hardwares;
+        const charts = [];
+        for (var hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
+            if (!hardwares[hardwareId][1])
+                continue;
+            const hardwareName = hardwares[hardwareId][0];
+            var sensorReadingSerieses = sensorReadings.filter(sensorReading => sensorReading.hardwareName == hardwareName);
+            const yAxises = [];
+            const lineCharts = [];
+            for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
+                var sensorReadingSeries = sensorReadingSerieses[sensorId];
+                //const min = isNaN(Number(sensorReadingSeries.sensor.minValue)) ? sensorReadingSeries.readings.min("value", null) : sensorReadingSeries.sensor.minValue;
+                //const max = isNaN(Number(sensorReadingSeries.sensor.maxValue)) ? sensorReadingSeries.readings.max("value") : sensorReadingSeries.sensor.maxValue;
+                const min = sensorReadingSeries.readings.min("value", filter => 0);
+                const max = sensorReadingSeries.readings.max("value");
+                yAxises.push(React.createElement(react_timeseries_charts_1.YAxis, { id: sensorReadingSeries.sensor.name, label: sensorReadingSeries.sensor.type, min: min, max: max, width: "50", type: "linear", format: ",.2f" }));
+                lineCharts.push(React.createElement(react_timeseries_charts_1.LineChart, { axis: sensorReadingSeries.sensor.name, series: sensorReadingSeries.readings, column: [sensorReadingSeries.sensor.type] }));
+            }
+            charts.push(React.createElement("div", { className: "row" },
+                React.createElement("div", { className: "col-12 d-flex justify-content-center " },
+                    React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: hardwareName },
+                        React.createElement(react_timeseries_charts_1.ChartRow, { height: "500" },
+                            yAxises,
+                            React.createElement(react_timeseries_charts_1.Charts, null, lineCharts))))));
+        }
+        return (charts);
+    }
+}
+exports.HardwareCharts = HardwareCharts;
 
 
 /***/ }),
