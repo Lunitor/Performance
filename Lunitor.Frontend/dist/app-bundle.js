@@ -141,6 +141,7 @@ class Application extends React.Component {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const data = yield getResponse('/sensorreadings');
+                data.forEach(sensorReading => sensorReading.sensor.name += "-" + sensorReading.sensor.type);
                 var hardwares = Array.from(new Set(data.map(sensorreading => sensorreading.hardware.name)));
                 var sensorReadingsByHardware = [];
                 for (var hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
@@ -158,7 +159,6 @@ class Application extends React.Component {
             }
         });
     }
-    //componentDidUpdate() { }
     handleHardwareSwitch(hardwareName) {
         const hardwares = this.state.hardwares;
         const hardwareState = hardwares.find(hardware => hardware[0] == hardwareName)[1];
@@ -198,7 +198,8 @@ class Application extends React.Component {
         });
     }
     getSensor(data, hardwares, hardwareId, sensorNames, sensorId) {
-        return data.find(sensorreading => sensorreading.hardware.name == hardwares[hardwareId] && sensorreading.sensor.name == sensorNames[sensorId]).sensor;
+        return data.find(sensorreading => sensorreading.hardware.name == hardwares[hardwareId] &&
+            sensorreading.sensor.name == sensorNames[sensorId]).sensor;
     }
     getSensorNames(data, hardwares, hardwareId) {
         return Array.from(new Set(data
@@ -275,6 +276,13 @@ exports.HardwareCharts = void 0;
 const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 const react_timeseries_charts_1 = __webpack_require__(/*! react-timeseries-charts */ "./node_modules/react-timeseries-charts/lib/entry.js");
 class HardwareCharts extends React.Component {
+    constructor(prop) {
+        super(prop);
+        this.state = {
+            sensors: this.props.sensorReadings
+                .map(sensorReading => [sensorReading.hardwareName, sensorReading.sensor.name, true])
+        };
+    }
     render() {
         const sensorReadings = this.props.sensorReadings;
         const hardwares = this.props.hardwares;
@@ -283,7 +291,22 @@ class HardwareCharts extends React.Component {
             if (!hardwares[hardwareId][1])
                 continue;
             const hardwareName = hardwares[hardwareId][0];
-            var sensorReadingSerieses = sensorReadings.filter(sensorReading => sensorReading.hardwareName == hardwareName);
+            const sensorSwitches = [];
+            const sensors = this.state.sensors.filter(sensor => sensor[0] == hardwareName);
+            for (var i = 0; i < sensors.length; i++) {
+                if (sensors[i][2])
+                    sensorSwitches.push(React.createElement("button", { value: sensors[i][0] + sensors[i][1], className: "btn btn-sm btn-primary m-1", onClick: (e) => this.handleSensorClick(e.currentTarget.value) },
+                        " ",
+                        sensors[i][1],
+                        " "));
+                else
+                    sensorSwitches.push(React.createElement("button", { value: sensors[i][0] + sensors[i][1], className: "btn btn-sm btn-secondary m-1", onClick: (e) => this.handleSensorClick(e.currentTarget.value) },
+                        " ",
+                        sensors[i][1],
+                        " "));
+            }
+            var sensorReadingSerieses = sensorReadings.filter(sensorReading => sensorReading.hardwareName == hardwareName &&
+                this.sensorChartEnabled(hardwareName, sensorReading.sensor.name));
             const yAxises = [];
             const lineCharts = [];
             for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
@@ -296,13 +319,26 @@ class HardwareCharts extends React.Component {
                 lineCharts.push(React.createElement(react_timeseries_charts_1.LineChart, { axis: sensorReadingSeries.sensor.name, series: sensorReadingSeries.readings, column: [sensorReadingSeries.sensor.type] }));
             }
             charts.push(React.createElement("div", { className: "row" },
-                React.createElement("div", { className: "col-12 d-flex justify-content-center " },
-                    React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: hardwareName },
-                        React.createElement(react_timeseries_charts_1.ChartRow, { height: "500" },
-                            yAxises,
-                            React.createElement(react_timeseries_charts_1.Charts, null, lineCharts))))));
+                React.createElement("div", { className: "row" }, sensorSwitches),
+                React.createElement("div", { className: "row" },
+                    React.createElement("div", { className: "col-12 d-flex justify-content-center " },
+                        React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: hardwareName },
+                            React.createElement(react_timeseries_charts_1.ChartRow, { height: "500" },
+                                yAxises,
+                                React.createElement(react_timeseries_charts_1.Charts, null, lineCharts)))))));
         }
         return (charts);
+    }
+    sensorChartEnabled(hardwareName, sensorName) {
+        return this.state.sensors.find(sensorSwitch => sensorSwitch[0] == hardwareName && sensorSwitch[1] == sensorName)[2];
+    }
+    handleSensorClick(hardwareSensorName) {
+        var sensors = this.state.sensors;
+        var sensorState = sensors.find(sensor => sensor[0] + sensor[1] == hardwareSensorName)[2];
+        sensors.find(sensor => sensor[0] + sensor[1] == hardwareSensorName)[2] = !sensorState;
+        this.setState({
+            sensors: sensors
+        });
     }
 }
 exports.HardwareCharts = HardwareCharts;

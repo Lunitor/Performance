@@ -52,6 +52,7 @@ export class Application extends React.Component {
     async componentDidMount() {
         try {
             const data = await getResponse<ISensorReading[]>('/sensorreadings');
+            data.forEach(sensorReading => sensorReading.sensor.name += "-" + sensorReading.sensor.type);
 
             var hardwares = Array.from(new Set(data.map(sensorreading => sensorreading.hardware.name)));
 
@@ -119,7 +120,9 @@ export class Application extends React.Component {
     }
 
     private getSensor(data: ISensorReading[], hardwares: string[], hardwareId: number, sensorNames: string[], sensorId: number) {
-        return data.find(sensorreading => sensorreading.hardware.name == hardwares[hardwareId] && sensorreading.sensor.name == sensorNames[sensorId]).sensor;
+        return data.find(sensorreading =>
+            sensorreading.hardware.name == hardwares[hardwareId] &&
+            sensorreading.sensor.name == sensorNames[sensorId]).sensor;
     }
 
     private getSensorNames(data: ISensorReading[], hardwares: string[], hardwareId: number) {
