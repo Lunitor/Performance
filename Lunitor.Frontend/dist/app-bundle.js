@@ -295,12 +295,12 @@ class HardwareCharts extends React.Component {
             const sensors = this.state.sensors.filter(sensor => sensor[0] == hardwareName);
             for (var i = 0; i < sensors.length; i++) {
                 if (sensors[i][2])
-                    sensorSwitches.push(React.createElement("button", { value: sensors[i][0] + sensors[i][1], className: "btn btn-sm btn-primary m-1", onClick: (e) => this.handleSensorClick(e.currentTarget.value) },
+                    sensorSwitches.push(React.createElement("button", { value: this.fullSensorName(sensors[i]), className: "btn btn-sm btn-primary m-1", onClick: (e) => this.handleSensorClick(e.currentTarget.value) },
                         " ",
                         sensors[i][1],
                         " "));
                 else
-                    sensorSwitches.push(React.createElement("button", { value: sensors[i][0] + sensors[i][1], className: "btn btn-sm btn-secondary m-1", onClick: (e) => this.handleSensorClick(e.currentTarget.value) },
+                    sensorSwitches.push(React.createElement("button", { value: this.fullSensorName(sensors[i]), className: "btn btn-sm btn-secondary m-1", onClick: (e) => this.handleSensorClick(e.currentTarget.value) },
                         " ",
                         sensors[i][1],
                         " "));
@@ -332,11 +332,17 @@ class HardwareCharts extends React.Component {
     }
     handleSensorClick(hardwareSensorName) {
         var sensors = this.state.sensors;
-        var sensorState = sensors.find(sensor => sensor[0] + sensor[1] == hardwareSensorName)[2];
-        sensors.find(sensor => sensor[0] + sensor[1] == hardwareSensorName)[2] = !sensorState;
+        var sensorState = sensors.find(sensor => this.fullSensorName(sensor) == hardwareSensorName)[2];
+        if (sensors.filter(sensor => sensor[0] == hardwareSensorName.split('_')[0] && sensor[2]).length == 1
+            && sensorState)
+            return;
+        sensors.find(sensor => this.fullSensorName(sensor) == hardwareSensorName)[2] = !sensorState;
         this.setState({
             sensors: sensors
         });
+    }
+    fullSensorName(sensor) {
+        return sensor[0] + "_" + sensor[1];
     }
 }
 exports.HardwareCharts = HardwareCharts;
