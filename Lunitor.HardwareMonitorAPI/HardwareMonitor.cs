@@ -69,6 +69,8 @@ namespace Lunitor.HardwareMonitorAPI
 
             foreach (var hardware in _computer.Hardware)
             {
+                hardware.Update();
+
                 var hardwareInfo = GetHardwareInfo(hardware);
 
                 foreach (var sensor in hardware.Sensors)
