@@ -56,6 +56,7 @@
     <TypeScriptCompile Include="components\HardwareCharts.tsx">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="components\SensorsMenu.tsx" />
     <TypeScriptCompile Include="models\IHardware.ts" />
     <TypeScriptCompile Include="models\ISensor.ts" />
     <TypeScriptCompile Include="models\ISensorReading.ts">

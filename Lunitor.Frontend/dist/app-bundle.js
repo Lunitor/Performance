@@ -275,6 +275,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HardwareCharts = void 0;
 const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 const react_timeseries_charts_1 = __webpack_require__(/*! react-timeseries-charts */ "./node_modules/react-timeseries-charts/lib/entry.js");
+const SensorsMenu_1 = __webpack_require__(/*! ./SensorsMenu */ "./components/SensorsMenu.tsx");
 class HardwareCharts extends React.Component {
     constructor(prop) {
         super(prop);
@@ -291,20 +292,14 @@ class HardwareCharts extends React.Component {
             if (!hardwares[hardwareId][1])
                 continue;
             const hardwareName = hardwares[hardwareId][0];
-            const sensorSwitches = [];
-            const sensors = this.state.sensors.filter(sensor => sensor[0] == hardwareName);
-            for (var i = 0; i < sensors.length; i++) {
-                if (sensors[i][2])
-                    sensorSwitches.push(React.createElement("button", { value: this.fullSensorName(sensors[i]), className: "btn btn-sm btn-primary m-1", onClick: (e) => this.handleSensorClick(e.currentTarget.value) },
-                        " ",
-                        sensors[i][1],
-                        " "));
-                else
-                    sensorSwitches.push(React.createElement("button", { value: this.fullSensorName(sensors[i]), className: "btn btn-sm btn-secondary m-1", onClick: (e) => this.handleSensorClick(e.currentTarget.value) },
-                        " ",
-                        sensors[i][1],
-                        " "));
-            }
+            //const sensorSwitches = [];
+            //const sensors = this.state.sensors.filter(sensor => sensor[0] == hardwareName);
+            //for(var i = 0; i < sensors.length; i++) {
+            //    if (sensors[i][2])
+            //        sensorSwitches.push(<button value={this.fullSensorName(sensors[i])} className="btn btn-sm btn-primary m-1" onClick={(e: React.MouseEvent<HTMLButtonElement>) => this.handleSensorClick(e.currentTarget.value)}> {sensors[i][1]} </button>)
+            //    else
+            //        sensorSwitches.push(<button value ={this.fullSensorName(sensors[i])} className="btn btn-sm btn-secondary m-1" onClick={(e: React.MouseEvent<HTMLButtonElement>) => this.handleSensorClick(e.currentTarget.value)}> {sensors[i][1]} </button>)
+            //}
             var sensorReadingSerieses = sensorReadings.filter(sensorReading => sensorReading.hardwareName == hardwareName &&
                 this.sensorChartEnabled(hardwareName, sensorReading.sensor.name));
             const yAxises = [];
@@ -317,7 +312,8 @@ class HardwareCharts extends React.Component {
                 lineCharts.push(React.createElement(react_timeseries_charts_1.LineChart, { axis: sensorReadingSeries.sensor.name, series: sensorReadingSeries.readings, column: [sensorReadingSeries.sensor.type] }));
             }
             charts.push(React.createElement("div", { className: "row" },
-                React.createElement("div", { className: "row" }, sensorSwitches),
+                React.createElement("div", { className: "row" },
+                    React.createElement(SensorsMenu_1.SensorsMenu, { hardwareName: hardwareName, sensors: this.state.sensors, sensorClickHandler: this.handleSensorClick.bind(this), fullSensorName: this.fullSensorName })),
                 React.createElement("div", { className: "row" },
                     React.createElement("div", { className: "col-12 d-flex justify-content-center " },
                         React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: hardwareName },
@@ -346,6 +342,43 @@ class HardwareCharts extends React.Component {
     }
 }
 exports.HardwareCharts = HardwareCharts;
+
+
+/***/ }),
+
+/***/ "./components/SensorsMenu.tsx":
+/*!************************************!*\
+  !*** ./components/SensorsMenu.tsx ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SensorsMenu = void 0;
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+class SensorsMenu extends React.Component {
+    render() {
+        const sensorSwitches = [];
+        const sensors = this.props.sensors.filter(sensor => sensor[0] == this.props.hardwareName);
+        for (var i = 0; i < sensors.length; i++) {
+            if (sensors[i][2])
+                sensorSwitches.push(React.createElement("button", { value: this.props.fullSensorName(sensors[i]), className: "btn btn-sm btn-primary m-1", onClick: (e) => this.props.sensorClickHandler(e.currentTarget.value) },
+                    " ",
+                    sensors[i][1],
+                    " "));
+            else
+                sensorSwitches.push(React.createElement("button", { value: this.props.fullSensorName(sensors[i]), className: "btn btn-sm btn-secondary m-1", onClick: (e) => this.props.sensorClickHandler(e.currentTarget.value) },
+                    " ",
+                    sensors[i][1],
+                    " "));
+        }
+        return (React.createElement("div", { className: "row mb-10" },
+            React.createElement("div", { className: " col-12 justify-content-center" }, sensorSwitches)));
+    }
+}
+exports.SensorsMenu = SensorsMenu;
 
 
 /***/ }),

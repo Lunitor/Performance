@@ -7,6 +7,7 @@ import {
     YAxis,
     LineChart
 } from "react-timeseries-charts";
+import { SensorsMenu } from "./SensorsMenu";
 
 type HardwareChartsProp = {
     sensorReadings: ISensorReadingSeries[],
@@ -41,15 +42,6 @@ export class HardwareCharts extends React.Component<HardwareChartsProp, Hardware
 
             const hardwareName = hardwares[hardwareId][0];
 
-            const sensorSwitches = [];
-            const sensors = this.state.sensors.filter(sensor => sensor[0] == hardwareName);
-            for(var i = 0; i < sensors.length; i++) {
-                if (sensors[i][2])
-                    sensorSwitches.push(<button value={this.fullSensorName(sensors[i])} className="btn btn-sm btn-primary m-1" onClick={(e: React.MouseEvent<HTMLButtonElement>) => this.handleSensorClick(e.currentTarget.value)}> {sensors[i][1]} </button>)
-                else
-                    sensorSwitches.push(<button value ={this.fullSensorName(sensors[i])} className="btn btn-sm btn-secondary m-1" onClick={(e: React.MouseEvent<HTMLButtonElement>) => this.handleSensorClick(e.currentTarget.value)}> {sensors[i][1]} </button>)
-            }
-
             var sensorReadingSerieses = sensorReadings.filter(sensorReading =>
                 sensorReading.hardwareName == hardwareName && 
                 this.sensorChartEnabled(hardwareName, sensorReading.sensor.name));
@@ -81,7 +73,10 @@ export class HardwareCharts extends React.Component<HardwareChartsProp, Hardware
             charts.push(
                 <div className="row">
                     <div className="row">
-                        {sensorSwitches}
+                        <SensorsMenu hardwareName={hardwareName}
+                            sensors={this.state.sensors}
+                            sensorClickHandler={this.handleSensorClick.bind(this)}
+                            fullSensorName={this.fullSensorName} />
                     </div>
                     <div className="row">
                         <div className="col-12 d-flex justify-content-center ">

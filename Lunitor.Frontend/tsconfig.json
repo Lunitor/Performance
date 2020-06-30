@@ -11,13 +11,8 @@
   "exclude": [
     "node_modules"
   ],
-  "files": [
-    "app.tsx",
-    "models/IHardware.ts",
-    "models/ISensor.ts",
-    "models/ISensorReading.ts",
-    "models/ISensorReadingSeries.ts",
-    "components/ChartsMenu.tsx",
-    "components/HardwareCharts.tsx"
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
   ]
 }
