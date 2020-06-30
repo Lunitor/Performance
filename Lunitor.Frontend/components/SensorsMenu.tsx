@@ -1,13 +1,13 @@
 import * as React from "react";
 
-type SensorsMenunProp = {
+type SensorsMenunProps = {
     hardwareName: string,
     sensors: [string, string, boolean][],
     sensorClickHandler: (sensorFullName: string) => void,
     fullSensorName: (sensor: [string, string, boolean]) => string
 }
 
-export class SensorsMenu extends React.Component<SensorsMenunProp> {
+export class SensorsMenu extends React.Component<SensorsMenunProps> {
     render() {
         const sensorSwitches = [];
         const sensors = this.props.sensors.filter(sensor => sensor[0] == this.props.hardwareName);
