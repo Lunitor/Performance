@@ -45,9 +45,9 @@ export class HardwareCharts extends React.Component<HardwareChartsProp, Hardware
             const sensors = this.state.sensors.filter(sensor => sensor[0] == hardwareName);
             for(var i = 0; i < sensors.length; i++) {
                 if (sensors[i][2])
-                    sensorSwitches.push(<button value={sensors[i][0]+sensors[i][1]} className="btn btn-sm btn-primary m-1" onClick={(e: React.MouseEvent<HTMLButtonElement>) => this.handleSensorClick(e.currentTarget.value)}> {sensors[i][1]} </button>)
+                    sensorSwitches.push(<button value={sensors[i][0] + sensors[i][1]} className="btn btn-sm btn-primary m-1" onClick={(e: React.MouseEvent<HTMLButtonElement>) => this.handleSensorClick(e.currentTarget.value)}> {sensors[i][1]} </button>)
                 else
-                    sensorSwitches.push(<button value={sensors[i][0]+sensors[i][1]} className="btn btn-sm btn-secondary m-1" onClick={(e: React.MouseEvent<HTMLInputElement>) => this.handleSensorClick(e.currentTarget.value)}> {sensors[i][1]} </button>)
+                    sensorSwitches.push(<button value={sensors[i][0] + sensors[i][1]} className="btn btn-sm btn-secondary m-1" onClick={(e: React.MouseEvent<HTMLButtonElement>) => this.handleSensorClick(e.currentTarget.value)}> {sensors[i][1]} </button>)
             }
 
             var sensorReadingSerieses = sensorReadings.filter(sensorReading =>
