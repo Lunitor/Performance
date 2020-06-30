@@ -1,13 +1,7 @@
 import * as React from "react";
 import { ISensorReadingSeries } from "../models/ISensorReadingSeries";
-import {
-    Charts,
-    ChartContainer,
-    ChartRow,
-    YAxis,
-    LineChart
-} from "react-timeseries-charts";
 import { SensorsMenu } from "./SensorsMenu";
+import { HardwareChart } from "./HardwareChart";
 
 type HardwareChartsProp = {
     sensorReadings: ISensorReadingSeries[],
@@ -30,8 +24,6 @@ export class HardwareCharts extends React.Component<HardwareChartsProp, Hardware
     }
 
     render() {
-
-        const sensorReadings = this.props.sensorReadings;
         const hardwares = this.props.hardwares;
 
         const charts = [];
@@ -42,58 +34,21 @@ export class HardwareCharts extends React.Component<HardwareChartsProp, Hardware
 
             const hardwareName = hardwares[hardwareId][0];
 
-            var sensorReadingSerieses = sensorReadings.filter(sensorReading =>
-                sensorReading.hardwareName == hardwareName && 
-                this.sensorChartEnabled(hardwareName, sensorReading.sensor.name));
-
-            const yAxises = [];
-            const lineCharts = [];
-
-            for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
-                var sensorReadingSeries = sensorReadingSerieses[sensorId];
-
-                const min = isNaN(Number(sensorReadingSeries.sensor.minValue)) ? sensorReadingSeries.readings.min("value") : sensorReadingSeries.sensor.minValue;
-                const max = isNaN(Number(sensorReadingSeries.sensor.maxValue)) ? sensorReadingSeries.readings.max("value") : sensorReadingSeries.sensor.maxValue;
-
-                yAxises.push(
-                    <YAxis id={sensorReadingSeries.sensor.name}
-                        label={sensorReadingSeries.sensor.type}
-                        min={min}
-                        max={max}
-                        width="50"
-                        type="linear"
-                        format=",.2f" />
-                );
-
-                lineCharts.push(
-                    <LineChart axis={sensorReadingSeries.sensor.name} series={sensorReadingSeries.readings} column={[sensorReadingSeries.sensor.type]} />
-                );
-            }
-
             charts.push(
                 <div className="row">
                     <div className="row">
-                        <SensorsMenu hardwareName={hardwareName}
+                        <SensorsMenu
+                            hardwareName={hardwareName}
                             sensors={this.state.sensors}
                             sensorClickHandler={this.handleSensorClick.bind(this)}
                             fullSensorName={this.fullSensorName} />
                     </div>
                     <div className="row">
                         <div className="col-12 d-flex justify-content-center ">
-                            <ChartContainer
-                                timeRange={sensorReadingSerieses[0].readings.timerange()}
-                                width={1500}
-                                format="%Y-%m-%d %H:%M:%S"
-                                timeAxisHeight={130}
-                                timeAxisAngledLabels={true}
-                                title={hardwareName}>
-                                <ChartRow height="500">
-                                    {yAxises}
-                                    <Charts>
-                                        {lineCharts}
-                                    </Charts>
-                                </ChartRow>
-                            </ChartContainer>
+                            <HardwareChart
+                                sensorReadings={this.props.sensorReadings}
+                                hardwareName={hardwareName}
+                                sensors={this.state.sensors} />
                         </div>
                     </div>
                 </div>
@@ -101,10 +56,6 @@ export class HardwareCharts extends React.Component<HardwareChartsProp, Hardware
         }
 
         return (charts);
-    }
-
-    private sensorChartEnabled(hardwareName: string, sensorName: string) {
-        return this.state.sensors.find(sensorSwitch => sensorSwitch[0] == hardwareName && sensorSwitch[1] == sensorName)[2];
     }
 
     handleSensorClick(hardwareSensorName: string) {
