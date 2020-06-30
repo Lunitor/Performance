@@ -60,10 +60,8 @@ export class HardwareCharts extends React.Component<HardwareChartsProp, Hardware
             for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
                 var sensorReadingSeries = sensorReadingSerieses[sensorId];
 
-                //const min = isNaN(Number(sensorReadingSeries.sensor.minValue)) ? sensorReadingSeries.readings.min("value", null) : sensorReadingSeries.sensor.minValue;
-                //const max = isNaN(Number(sensorReadingSeries.sensor.maxValue)) ? sensorReadingSeries.readings.max("value") : sensorReadingSeries.sensor.maxValue;
-                const min = sensorReadingSeries.readings.min("value", filter => 0);
-                const max = sensorReadingSeries.readings.max("value");
+                const min = isNaN(Number(sensorReadingSeries.sensor.minValue)) ? sensorReadingSeries.readings.min("value") : sensorReadingSeries.sensor.minValue;
+                const max = isNaN(Number(sensorReadingSeries.sensor.maxValue)) ? sensorReadingSeries.readings.max("value") : sensorReadingSeries.sensor.maxValue;
 
                 yAxises.push(
                     <YAxis id={sensorReadingSeries.sensor.name}
