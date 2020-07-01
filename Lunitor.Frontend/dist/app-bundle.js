@@ -277,21 +277,18 @@ const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 const react_timeseries_charts_1 = __webpack_require__(/*! react-timeseries-charts */ "./node_modules/react-timeseries-charts/lib/entry.js");
 class HardwareChart extends React.Component {
     render() {
-        var sensorReadingSerieses = this.props.sensorReadings.filter(sensorReading => sensorReading.hardwareName == this.props.hardwareName &&
-            this.sensorChartEnabled(this.props.hardwareName, sensorReading.sensor.name));
+        var sensorReadingSerieses = this.props.sensorReadings.filter(sensorReading => sensorReading.hardwareName == this.props.hardwareName);
         const yAxises = [];
         const lineCharts = [];
         for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
             var sensorReadingSeries = sensorReadingSerieses[sensorId];
+            if (!this.sensorChartEnabled(this.props.hardwareName, sensorReadingSeries.sensor.name))
+                continue;
             const min = isNaN(Number(sensorReadingSeries.sensor.minValue)) ? sensorReadingSeries.readings.min("value") : sensorReadingSeries.sensor.minValue;
             const max = isNaN(Number(sensorReadingSeries.sensor.maxValue)) ? sensorReadingSeries.readings.max("value") : sensorReadingSeries.sensor.maxValue;
             yAxises.push(React.createElement(react_timeseries_charts_1.YAxis, { id: sensorReadingSeries.sensor.name, label: sensorReadingSeries.sensor.type, min: min, max: max, width: "50", type: "linear", format: ",.2f" }));
-            //const color = randomColor({
-            //    luminosity: 'light',
-            //    hue: 'random'
-            //});
             const style = react_timeseries_charts_1.styler([{ key: "value", color: this.props.colors[sensorId] }]);
-            lineCharts.push(React.createElement(react_timeseries_charts_1.LineChart, { key: this.props.fullSensorName(this.props.sensors[sensorId]), axis: sensorReadingSeries.sensor.name, series: sensorReadingSeries.readings, column: [sensorReadingSeries.sensor.type], style: style }));
+            lineCharts.push(React.createElement(react_timeseries_charts_1.LineChart, { key: this.props.fullSensorName(this.props.sensors[sensorId]), axis: sensorReadingSeries.sensor.name, series: sensorReadingSeries.readings, column: [sensorReadingSeries.sensor.type], style: style, interpolation: "curveBasis" }));
         }
         return (React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: this.props.hardwareName },
             React.createElement(react_timeseries_charts_1.ChartRow, { height: "500" },
@@ -329,7 +326,7 @@ class HardwareCharts extends React.Component {
             sensors: this.props.sensorReadings
                 .map(sensorReading => [sensorReading.hardwareName, sensorReading.sensor.name, true]),
             colors: randomColor({
-                luminosity: 'light',
+                luminosity: 'dark',
                 hue: 'random',
                 count: 40
             })
@@ -344,7 +341,7 @@ class HardwareCharts extends React.Component {
             const hardwareName = hardwares[hardwareId][0];
             charts.push(React.createElement("div", { className: "row" },
                 React.createElement("div", { className: "row" },
-                    React.createElement(SensorsMenu_1.SensorsMenu, { hardwareName: hardwareName, sensors: this.state.sensors, sensorClickHandler: this.handleSensorClick.bind(this), fullSensorName: this.fullSensorName })),
+                    React.createElement(SensorsMenu_1.SensorsMenu, { hardwareName: hardwareName, sensors: this.state.sensors, sensorClickHandler: this.handleSensorClick.bind(this), fullSensorName: this.fullSensorName, colors: this.state.colors })),
                 React.createElement("div", { className: "row" },
                     React.createElement("div", { className: "col-12 d-flex justify-content-center " },
                         React.createElement(HardwareChart_1.HardwareChart, { sensorReadings: this.props.sensorReadings, hardwareName: hardwareName, sensors: this.state.sensors, fullSensorName: this.fullSensorName, colors: this.state.colors })))));
@@ -389,15 +386,13 @@ class SensorsMenu extends React.Component {
         const sensors = this.props.sensors.filter(sensor => sensor[0] == this.props.hardwareName);
         for (var i = 0; i < sensors.length; i++) {
             if (sensors[i][2])
-                sensorSwitches.push(React.createElement("button", { value: this.props.fullSensorName(sensors[i]), className: "btn btn-sm btn-primary m-1", onClick: (e) => this.props.sensorClickHandler(e.currentTarget.value) },
+                sensorSwitches.push(React.createElement("button", { value: this.props.fullSensorName(sensors[i]), className: "btn btn-sm btn-primary m-1", style: { backgroundColor: this.props.colors[i] }, onClick: (e) => this.props.sensorClickHandler(e.currentTarget.value) },
                     " ",
-                    sensors[i][1],
-                    " "));
+                    sensors[i][1]));
             else
                 sensorSwitches.push(React.createElement("button", { value: this.props.fullSensorName(sensors[i]), className: "btn btn-sm btn-secondary m-1", onClick: (e) => this.props.sensorClickHandler(e.currentTarget.value) },
                     " ",
-                    sensors[i][1],
-                    " "));
+                    sensors[i][1]));
         }
         return (React.createElement("div", { className: "row mb-10" },
             React.createElement("div", { className: " col-12 justify-content-center" }, sensorSwitches)));

@@ -23,7 +23,7 @@ export class HardwareCharts extends React.Component<HardwareChartsProp, Hardware
             sensors: this.props.sensorReadings
                 .map(sensorReading => [sensorReading.hardwareName, sensorReading.sensor.name, true]),
             colors: randomColor({
-                luminosity: 'light',
+                luminosity: 'dark',
                 hue: 'random',
                 count: 40
             })
@@ -48,7 +48,8 @@ export class HardwareCharts extends React.Component<HardwareChartsProp, Hardware
                             hardwareName={hardwareName}
                             sensors={this.state.sensors}
                             sensorClickHandler={this.handleSensorClick.bind(this)}
-                            fullSensorName={this.fullSensorName} />
+                            fullSensorName={this.fullSensorName}
+                            colors={this.state.colors} />
                     </div>
                     <div className="row">
                         <div className="col-12 d-flex justify-content-center ">
