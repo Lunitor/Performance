@@ -4,28 +4,33 @@ import {
     ChartContainer,
     ChartRow,
     YAxis,
-    LineChart
+    LineChart,
+    styler
 } from "react-timeseries-charts";
 import { ISensorReadingSeries } from "../models/ISensorReadingSeries";
 
 type HardwareChartProps = {
     sensorReadings: ISensorReadingSeries[],
     hardwareName: string,
-    sensors: [string, string, boolean][]
+    sensors: [string, string, boolean][],
+    fullSensorName: (sensor: [string, string, boolean]) => string,
+    colors: string[]
 }
 
 export class HardwareChart extends React.Component<HardwareChartProps> {
     render() {
 
         var sensorReadingSerieses = this.props.sensorReadings.filter(sensorReading =>
-            sensorReading.hardwareName == this.props.hardwareName &&
-            this.sensorChartEnabled(this.props.hardwareName, sensorReading.sensor.name));
+            sensorReading.hardwareName == this.props.hardwareName);
 
         const yAxises = [];
         const lineCharts = [];
 
         for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
             var sensorReadingSeries = sensorReadingSerieses[sensorId];
+
+            if (!this.sensorChartEnabled(this.props.hardwareName, sensorReadingSeries.sensor.name))
+                continue;
 
             const min = isNaN(Number(sensorReadingSeries.sensor.minValue)) ? sensorReadingSeries.readings.min("value") : sensorReadingSeries.sensor.minValue;
             const max = isNaN(Number(sensorReadingSeries.sensor.maxValue)) ? sensorReadingSeries.readings.max("value") : sensorReadingSeries.sensor.maxValue;
@@ -40,8 +45,15 @@ export class HardwareChart extends React.Component<HardwareChartProps> {
                     format=",.2f" />
             );
 
+            const style = styler([{ key: "value", color: this.props.colors[sensorId] }]);
+
             lineCharts.push(
-                <LineChart axis={sensorReadingSeries.sensor.name} series={sensorReadingSeries.readings} column={[sensorReadingSeries.sensor.type]} />
+                <LineChart key={this.props.fullSensorName(this.props.sensors[sensorId])}
+                    axis={sensorReadingSeries.sensor.name}
+                    series={sensorReadingSeries.readings}
+                    column={[sensorReadingSeries.sensor.type]}
+                    style={style}
+                />
             );
         }
 

@@ -8,10 +8,12 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.10.3",
+    "@types/randomcolor": "^0.5.5",
     "@types/react": "^16.9.41",
     "express": "^4.17.1",
     "path": "^0.12.7",
     "pondjs": "0.8.10",
+    "randomcolor": "^0.5.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-timeseries-charts": "^0.16.1",

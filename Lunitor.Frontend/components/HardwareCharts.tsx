@@ -2,6 +2,7 @@ import * as React from "react";
 import { ISensorReadingSeries } from "../models/ISensorReadingSeries";
 import { SensorsMenu } from "./SensorsMenu";
 import { HardwareChart } from "./HardwareChart";
+import randomColor = require("randomcolor");
 
 type HardwareChartsProp = {
     sensorReadings: ISensorReadingSeries[],
@@ -9,7 +10,8 @@ type HardwareChartsProp = {
 }
 
 type HardwareChartsState = {
-    sensors: [string, string, boolean][]
+    sensors: [string, string, boolean][],
+    colors: string[]
 }
 
 export class HardwareCharts extends React.Component<HardwareChartsProp, HardwareChartsState> {
@@ -19,7 +21,12 @@ export class HardwareCharts extends React.Component<HardwareChartsProp, Hardware
 
         this.state = {
             sensors: this.props.sensorReadings
-                .map(sensorReading => [sensorReading.hardwareName, sensorReading.sensor.name, true])
+                .map(sensorReading => [sensorReading.hardwareName, sensorReading.sensor.name, true]),
+            colors: randomColor({
+                luminosity: 'light',
+                hue: 'random',
+                count: 40
+            })
         };
     }
 
@@ -48,7 +55,9 @@ export class HardwareCharts extends React.Component<HardwareChartsProp, Hardware
                             <HardwareChart
                                 sensorReadings={this.props.sensorReadings}
                                 hardwareName={hardwareName}
-                                sensors={this.state.sensors} />
+                                sensors={this.state.sensors}
+                                fullSensorName={this.fullSensorName}
+                                colors={this.state.colors} />
                         </div>
                     </div>
                 </div>
