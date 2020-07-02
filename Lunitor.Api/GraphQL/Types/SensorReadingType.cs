@@ -1,16 +1,16 @@
 ﻿using GraphQL.Types;
-using Lunitor.HardwareMonitorAPI.Models;
+using Lunitor.Shared.Dto;
 
 namespace Lunitor.Api.GraphQL.Types
 {
-    public class SensorReadingType : ObjectGraphType<SensorReading>
+    public class SensorReadingType : ObjectGraphType<SensorReadingDto>
     {
         public SensorReadingType()
         {
             Field(x => x.TimeStamp);
-            Field<HardwareType>(nameof(SensorReading.Hardware));
-            Field<SensorType>(nameof(SensorReading.Sensor));
-            Field(x => x.Value);
+            Field<HardwareType>(nameof(SensorReadingDto.Hardware));
+            Field<SensorType>(nameof(SensorReadingDto.Sensor));
+            Field(x => x.Value, nullable: true);
         }
     }
 }

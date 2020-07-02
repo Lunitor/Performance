@@ -1,9 +1,9 @@
 ﻿using GraphQL.Types;
-using Lunitor.HardwareMonitorAPI.Models;
+using Lunitor.Shared.Dto;
 
 namespace Lunitor.Api.GraphQL.Types
 {
-    public class HardwareType : ObjectGraphType<Hardware>
+    public class HardwareType : ObjectGraphType<HardwareDto>
     {
         public HardwareType()
         {
