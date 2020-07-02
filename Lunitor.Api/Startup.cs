@@ -2,11 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GraphQL;
+using GraphQL.Server;
+using GraphQL.Server.Ui.Playground;
 using Lunitor.Api.Cache;
+using Lunitor.Api.GraphQL;
 using Lunitor.Shared.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,6 +31,21 @@ namespace Lunitor.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddScoped<IDependencyResolver>(x => new FuncDependencyResolver(x.GetRequiredService));
+            services.AddScoped<SensorReadingSchema>();
+            services.AddGraphQL(options =>
+            {
+                options.ExposeExceptions = true;
+            })
+            .AddGraphTypes(ServiceLifetime.Scoped);
+
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
+
             services.AddCache(Configuration.GetConnectionString("Redis"));
 
             services.AddControllers()
@@ -35,6 +55,9 @@ namespace Lunitor.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseGraphQL<SensorReadingSchema>();
+            app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
