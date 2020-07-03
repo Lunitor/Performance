@@ -7,7 +7,7 @@ namespace Lunitor.Api.GraphQL.Types
     {
         public SensorReadingType()
         {
-            Field(x => x.TimeStamp);
+            Field<DateTimeGraphType>(nameof(SensorReadingDto.TimeStamp));
             Field<HardwareType>(nameof(SensorReadingDto.Hardware));
             Field<SensorType>(nameof(SensorReadingDto.Sensor));
             Field(x => x.Value, nullable: true);
