@@ -1,13 +1,14 @@
-﻿using GraphQL;
-using GraphQL.Types;
+﻿using GraphQL.Types;
+using GraphQL.Utilities;
+using System;
 
 namespace Lunitor.Api.GraphQL
 {
     public class SensorReadingSchema : Schema
     {
-        public SensorReadingSchema(IDependencyResolver dependencyResolver) : base(dependencyResolver)
+        public SensorReadingSchema(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            Query = dependencyResolver.Resolve<SensorReadingQuery>();
+            Query = serviceProvider.GetRequiredService<SensorReadingQuery>();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using GraphQL.Types;
+﻿using GraphQL;
+using GraphQL.Types;
 using Lunitor.Api.Cache;
 using Lunitor.Api.GraphQL.Types;
 using System;
@@ -36,7 +37,6 @@ namespace Lunitor.Api.GraphQL
                     var fromDate = context.GetArgument<DateTimeOffset?>("from");
                     var toDate = context.GetArgument<DateTimeOffset?>("to");
                     var criticalValuePercent = context.GetArgument<double?>("criticalValuePercent") ?? 1.0;
-
                     if (fromDate.HasValue && !toDate.HasValue)
                         return _sensorCache.GetAll().Where(sensorreading => sensorreading.TimeStamp >= fromDate.Value
                             && sensorreading.Value >= criticalValuePercent * (sensorreading.Sensor.MaxValue ?? double.MaxValue));
