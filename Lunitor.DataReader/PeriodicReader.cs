@@ -17,14 +17,20 @@ namespace Lunitor.DataReader
         private readonly int _periodicity;
         private readonly IHardwareMonitor _hardwareMonitor;
         private readonly ISensorCacheWriter _sensorCacheWriter;
+        private readonly ISensorCacheCleaner _sensorCacheCleaner;
 
-        public PeriodicReader(ILogger<PeriodicReader> logger, IConfiguration configuration, IHardwareMonitor hardwareMonitor, ISensorCacheWriter sensorCacheWriter)
+        public PeriodicReader(ILogger<PeriodicReader> logger,
+            IConfiguration configuration,
+            IHardwareMonitor hardwareMonitor,
+            ISensorCacheWriter sensorCacheWriter,
+            ISensorCacheCleaner sensorCacheCleaner)
         {
             _logger = logger;
             _periodicity = configuration.GetValue<int>("Reader:Periodicity");
 
             _hardwareMonitor = hardwareMonitor;
             _sensorCacheWriter = sensorCacheWriter;
+            _sensorCacheCleaner = sensorCacheCleaner;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -55,6 +61,7 @@ namespace Lunitor.DataReader
                         Console.WriteLine($"{reading.TimeStamp} {reading.Hardware.Type} {reading.Hardware.Name} {reading.Sensor.Type} {reading.Sensor.Name} {reading.Value}");
                     }
 
+                    _sensorCacheCleaner.Clean();
                     _sensorCacheWriter.Add(readings.Select(sr => sr.Map()));
                 }
                 catch (Exception ex)
