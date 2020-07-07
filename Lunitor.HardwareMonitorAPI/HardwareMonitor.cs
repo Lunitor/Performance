@@ -65,7 +65,7 @@ namespace Lunitor.HardwareMonitorAPI
         {
             var readings = new List<SensorReading>();
 
-            var timeStamp = DateTime.Now;
+            var timeStamp = DateTime.UtcNow;
 
             foreach (var hardware in _computer.Hardware)
             {
