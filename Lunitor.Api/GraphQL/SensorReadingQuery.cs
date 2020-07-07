@@ -1,20 +1,19 @@
 ﻿using GraphQL;
 using GraphQL.Types;
-using Lunitor.Api.Cache;
 using Lunitor.Api.GraphQL.Types;
+using Lunitor.Api.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lunitor.Api.GraphQL
 {
     internal class SensorReadingQuery : ObjectGraphType
     {
-        private readonly ISensorCacheReader _sensorCache;
+        private readonly ISensorReadingService _sensorReadingService;
 
-        public SensorReadingQuery(ISensorCacheReader sensorCache)
+        public SensorReadingQuery(ISensorReadingService sensorReadingService)
         {
-            _sensorCache = sensorCache;
+            _sensorReadingService = sensorReadingService;
 
             Field<ListGraphType<SensorReadingType>>("sensorreadings",
                 arguments: new QueryArguments(new List<QueryArgument>
@@ -34,28 +33,26 @@ namespace Lunitor.Api.GraphQL
                 }),
                 resolve: context =>
                 {
-                    var fromDate = context.GetArgument<DateTimeOffset?>("from");
-                    var toDate = context.GetArgument<DateTimeOffset?>("to");
-                    var criticalValuePercent = context.GetArgument<double?>("criticalValuePercent") ?? 1.0;
-                    if (fromDate.HasValue && !toDate.HasValue)
-                        return _sensorCache.GetAll().Where(sensorreading => sensorreading.TimeStamp >= fromDate.Value
-                            && sensorreading.Value >= criticalValuePercent * (sensorreading.Sensor.MaxValue ?? double.MaxValue));
+                    var fromDate = context.GetArgument<DateTime?>("from");
+                    var toDate = context.GetArgument<DateTime?>("to");
 
-                    if(!fromDate.HasValue && toDate.HasValue)
-                        return _sensorCache.GetAll().Where(sensorreading => sensorreading.TimeStamp <= toDate.Value
-                            && sensorreading.Value >= criticalValuePercent * (sensorreading.Sensor.MaxValue ?? double.MaxValue));
+                    var criticalValuePercent = ClipValue(context);
 
-                    if(fromDate.HasValue && toDate.HasValue)
-                        return _sensorCache.GetAll().Where(sensorreading => sensorreading.TimeStamp <= toDate.Value
-                            && sensorreading.TimeStamp >= fromDate.Value
-                            && sensorreading.Value >= criticalValuePercent * (sensorreading.Sensor.MaxValue ?? double.MaxValue));
+                    return _sensorReadingService.Get(from: fromDate, to: toDate, criticalValuePercent: criticalValuePercent);
 
-                    if (!fromDate.HasValue && !toDate.HasValue)
-                        return _sensorCache.GetAll().Where(sensorreading => 
-                            sensorreading.Value >= criticalValuePercent * (sensorreading.Sensor.MaxValue ?? double.MaxValue));
-
-                    return _sensorCache.GetAll();
                 });
+        }
+
+        private static float ClipValue(IResolveFieldContext<object> context)
+        {
+            var value = context.GetArgument<double?>("criticalValuePercent") ?? 1.0;
+
+            if (value >= 1.0)
+                return 1.0f;
+            else if (value <= 0)
+                return 0;
+            else
+                return (float)value;
         }
     }
 }
