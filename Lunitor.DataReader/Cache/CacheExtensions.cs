@@ -7,14 +7,13 @@ namespace Lunitor.DataReader.Cache
     {
         public static void AddCache(this IServiceCollection services, string connection)
         {
-            services.AddSingleton(sp =>
-            {
-                ConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect(connection);
+            var connectionMx = ConnectionMultiplexer.Connect(connection);
 
-                return connectionMultiplexer.GetDatabase();
-            });
+            services.AddSingleton(sp => connectionMx.GetDatabase());
+            services.AddSingleton(sp => connectionMx.GetServer(connectionMx.Configuration));
 
             services.AddSingleton<ISensorCacheWriter, SensorCacheWriter>();
+            services.AddSingleton<ISensorCacheCleaner, SensorCacheCleaner>();
         }
     }
 }
