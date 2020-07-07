@@ -26,6 +26,7 @@ namespace Lunitor.DataReader.Cache
         {
             Guard.Against.Null(sensorReadings, nameof(sensorReadings));
 
+            // Add new sensor readings
             var sensorReadingsByTypes = sensorReadings.GroupBy(sr => new { HardwareName = sr.Hardware.Name, SensorName = sr.Sensor.Name }, sr => sr);
 
             foreach (var group in sensorReadingsByTypes)

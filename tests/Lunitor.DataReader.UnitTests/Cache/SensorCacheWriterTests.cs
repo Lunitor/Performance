@@ -11,12 +11,14 @@ namespace Lunitor.DataReader.UnitTests.Cache
 {
     public class SensorCacheWriterTests
     {
-        SensorCacheWriter _sensorCacheWriter;
-        Mock<IDatabase> _databaseMock;
+        private SensorCacheWriter _sensorCacheWriter;
+
+        private Mock<IDatabase> _databaseMock;
 
         public SensorCacheWriterTests()
         {
             _databaseMock = new Mock<IDatabase>();
+
             _sensorCacheWriter = new SensorCacheWriter(_databaseMock.Object);
         }
 
@@ -85,7 +87,6 @@ namespace Lunitor.DataReader.UnitTests.Cache
 
             _databaseMock.Verify(db => db.ListLeftPush(It.IsAny<RedisKey>(), It.IsAny<RedisValue[]>(), It.IsAny<CommandFlags>()));
         }
-
 
         public static IEnumerable<object[]> SensorReadingDataAndExpectedListKeys =>
             new List<object[]>
