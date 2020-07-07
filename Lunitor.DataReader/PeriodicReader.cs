@@ -53,6 +53,19 @@ namespace Lunitor.DataReader
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Running at: {time}", DateTimeOffset.Now);
+                
+                _logger.LogInformation("Cleaning sensor readings cache ...");
+                try
+                {
+                    _sensorCacheCleaner.Clean();
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Failed to clean sensor readings cache");
+                }
+
+                _logger.LogInformation("Sensor reading...");
                 try
                 {
                     var readings = _hardwareMonitor.Read();
@@ -61,7 +74,6 @@ namespace Lunitor.DataReader
                         Console.WriteLine($"{reading.TimeStamp} {reading.Hardware.Type} {reading.Hardware.Name} {reading.Sensor.Type} {reading.Sensor.Name} {reading.Value}");
                     }
 
-                    _sensorCacheCleaner.Clean();
                     _sensorCacheWriter.Add(readings.Select(sr => sr.Map()));
                 }
                 catch (Exception ex)
