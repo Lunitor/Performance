@@ -286,9 +286,9 @@ class HardwareChart extends React.Component {
                 continue;
             const min = isNaN(Number(sensorReadingSeries.sensor.minValue)) ? sensorReadingSeries.readings.min("value") : sensorReadingSeries.sensor.minValue;
             const max = isNaN(Number(sensorReadingSeries.sensor.maxValue)) ? sensorReadingSeries.readings.max("value") : sensorReadingSeries.sensor.maxValue;
-            yAxises.push(React.createElement(react_timeseries_charts_1.YAxis, { id: sensorReadingSeries.sensor.name, label: sensorReadingSeries.sensor.type, min: min, max: max, width: "50", type: "linear", format: ",.2f" }));
             const style = react_timeseries_charts_1.styler([{ key: "value", color: this.props.colors[sensorId] }]);
-            lineCharts.push(React.createElement(react_timeseries_charts_1.LineChart, { key: this.props.fullSensorName(this.props.sensors[sensorId]), axis: sensorReadingSeries.sensor.name, series: sensorReadingSeries.readings, column: [sensorReadingSeries.sensor.type], style: style, interpolation: "curveBasis" }));
+            yAxises.push(React.createElement(react_timeseries_charts_1.YAxis, { id: sensorReadingSeries.sensor.name, label: sensorReadingSeries.sensor.type, min: min, max: max, width: "50", type: "linear", format: ",.2f", style: style.axisStyle("value") }));
+            lineCharts.push(React.createElement(react_timeseries_charts_1.LineChart, { key: this.props.fullSensorName(this.props.sensors[sensorId]), axis: sensorReadingSeries.sensor.name, series: sensorReadingSeries.readings, column: [sensorReadingSeries.sensor.type], style: style }));
         }
         return (React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: this.props.hardwareName },
             React.createElement(react_timeseries_charts_1.ChartRow, { height: "500" },
