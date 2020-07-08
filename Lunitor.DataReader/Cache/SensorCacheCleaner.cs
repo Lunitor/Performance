@@ -29,7 +29,7 @@ namespace Lunitor.DataReader.Cache
 
         public void Clean()
         {
-            var currentTime = DateTime.Now;
+            var currentTime = DateTime.UtcNow;
             var keys = _server.Keys();
 
             foreach (var key in keys)
