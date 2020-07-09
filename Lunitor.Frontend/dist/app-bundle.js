@@ -95,6 +95,66 @@
 
 "use strict";
 
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Application = void 0;
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const ReactDOM = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+const Content_1 = __webpack_require__(/*! ./components/Content */ "./components/Content.tsx");
+class Application extends React.Component {
+    render() {
+        var page = [];
+        const content = React.createElement(Content_1.Content, null);
+        page.push(content);
+        return (page);
+    }
+}
+exports.Application = Application;
+ReactDOM.render(React.createElement(Application, null), document.getElementById('root'));
+
+
+/***/ }),
+
+/***/ "./components/ChartsMenu.tsx":
+/*!***********************************!*\
+  !*** ./components/ChartsMenu.tsx ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChartsMenu = void 0;
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+class ChartsMenu extends React.Component {
+    render() {
+        const hardwares = this.props.hardwares;
+        const handleClick = this.props.handleClick;
+        const hardwareSwitches = [];
+        for (var i = 0; i < hardwares.length; i++) {
+            if (hardwares[i][1])
+                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], className: "btn btn-sm btn-primary m-1", onClick: (e) => handleClick(e.currentTarget.value) }, hardwares[i][0]));
+            else
+                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], className: "btn btn-sm btn-secondary m-1", onClick: (e) => handleClick(e.currentTarget.value) }, hardwares[i][0]));
+        }
+        return (React.createElement("div", { className: "row mb-10" },
+            React.createElement("div", { className: "col-12 justify-content-center" }, hardwareSwitches)));
+    }
+}
+exports.ChartsMenu = ChartsMenu;
+
+
+/***/ }),
+
+/***/ "./components/Content.tsx":
+/*!********************************!*\
+  !*** ./components/Content.tsx ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -105,13 +165,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getResponse = exports.Application = void 0;
+exports.getResponse = exports.Content = void 0;
 const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-const ReactDOM = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 const pondjs_1 = __webpack_require__(/*! pondjs */ "./node_modules/pondjs/lib/entry.js");
-const ChartsMenu_1 = __webpack_require__(/*! ./components/ChartsMenu */ "./components/ChartsMenu.tsx");
-const HardwareCharts_1 = __webpack_require__(/*! ./components/HardwareCharts */ "./components/HardwareCharts.tsx");
-class Application extends React.Component {
+const ChartsMenu_1 = __webpack_require__(/*! ../components/ChartsMenu */ "./components/ChartsMenu.tsx");
+const HardwareCharts_1 = __webpack_require__(/*! ../components/HardwareCharts */ "./components/HardwareCharts.tsx");
+class Content extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -123,21 +182,32 @@ class Application extends React.Component {
     render() {
         const sensorReadings = this.state.sensorReadings;
         const error = this.state.error;
-        const hardwares = this.state.hardwares;
         if (error)
             return (React.createElement("div", { className: "row" },
                 React.createElement("div", { className: "col-12" }, error)));
-        if (!sensorReadings || !hardwares)
+        if (!sensorReadings || !this.state.hardwares)
             return (React.createElement("div", { className: "row" },
                 React.createElement("div", { className: "col-12 d-flex justify-content-center text-center" }, "Loading...")));
         var page = [];
-        const chartsMenu = React.createElement(ChartsMenu_1.ChartsMenu, { hardwares: hardwares, handleClick: this.handleHardwareSwitch.bind(this) });
+        const chartsMenu = React.createElement(ChartsMenu_1.ChartsMenu, { hardwares: this.state.hardwares, handleClick: this.handleHardwareSwitch.bind(this) });
         page.push(chartsMenu);
-        const charts = React.createElement(HardwareCharts_1.HardwareCharts, { sensorReadings: sensorReadings, hardwares: hardwares });
+        const charts = React.createElement(HardwareCharts_1.HardwareCharts, { sensorReadings: sensorReadings, hardwares: this.state.hardwares });
         page.push(charts);
         return (page);
     }
     componentDidMount() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.fetchData();
+            this.timer = setInterval(() => this.fetchData(), 5000);
+        });
+    }
+    componentWillUnmount() {
+        return __awaiter(this, void 0, void 0, function* () {
+            clearInterval(this.timer);
+            this.timer = null;
+        });
+    }
+    fetchData() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const data = yield getResponse('/sensorreadings');
@@ -148,9 +218,14 @@ class Application extends React.Component {
                     var sensorNames = this.getSensorNames(data, hardwares, hardwareId);
                     this.fillSensorReadingsByHardware(sensorNames, sensorReadingsByHardware, hardwares, hardwareId, data);
                 }
+                const prevHardwares = this.state.hardwares || new Array();
                 this.setState({
                     sensorReadings: sensorReadingsByHardware,
-                    hardwares: hardwares.map(hardware => [hardware, true])
+                    hardwares: hardwares.map(hardware => {
+                        const prevHardware = prevHardwares.find(h => h[0] == hardware);
+                        const hardwareState = prevHardware ? prevHardware[1] : true;
+                        return [hardware, hardwareState];
+                    })
                 });
             }
             catch (error) {
@@ -192,7 +267,7 @@ class Application extends React.Component {
         })
             .map(reading => {
             return [
-                (new Date(reading.timeStamp)).getTime(),
+                (new Date(reading.timeStamp)).addHours(2).getTime(),
                 reading.value
             ];
         });
@@ -207,7 +282,11 @@ class Application extends React.Component {
             .map(sensorreading => sensorreading.sensor.name)));
     }
 }
-exports.Application = Application;
+exports.Content = Content;
+Date.prototype.addHours = function (h) {
+    this.setHours(this.getHours() + h);
+    return this;
+};
 function getResponse(request) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield fetch(request);
@@ -216,48 +295,6 @@ function getResponse(request) {
     });
 }
 exports.getResponse = getResponse;
-ReactDOM.render(React.createElement(Application, null), document.getElementById('root'));
-
-
-/***/ }),
-
-/***/ "./components/ChartsMenu.tsx":
-/*!***********************************!*\
-  !*** ./components/ChartsMenu.tsx ***!
-  \***********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChartsMenu = void 0;
-const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-class ChartsMenu extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-    render() {
-        const hardwares = this.props.hardwares;
-        const handleClick = this.props.handleClick;
-        const hardwareSwitches = [];
-        for (var i = 0; i < hardwares.length; i++) {
-            if (hardwares[i][1])
-                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], className: "btn btn-sm btn-primary m-1", onClick: (e) => handleClick(e.currentTarget.value) },
-                    " ",
-                    hardwares[i][0],
-                    " "));
-            else
-                hardwareSwitches.push(React.createElement("button", { value: hardwares[i][0], className: "btn btn-sm btn-secondary m-1", onClick: (e) => handleClick(e.currentTarget.value) },
-                    " ",
-                    hardwares[i][0],
-                    " "));
-        }
-        return (React.createElement("div", { className: "row mb-10" },
-            React.createElement("div", { className: "col-12 justify-content-center" }, hardwareSwitches)));
-    }
-}
-exports.ChartsMenu = ChartsMenu;
 
 
 /***/ }),

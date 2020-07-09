@@ -12,6 +12,7 @@ export class SensorsMenu extends React.Component<SensorsMenunProps> {
     render() {
         const sensorSwitches = [];
         const sensors = this.props.sensors.filter(sensor => sensor[0] == this.props.hardwareName);
+
         for (var i = 0; i < sensors.length; i++) {
             if (sensors[i][2])
                 sensorSwitches.push(<button value={this.props.fullSensorName(sensors[i])}

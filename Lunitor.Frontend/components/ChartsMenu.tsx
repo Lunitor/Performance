@@ -6,11 +6,6 @@ type ChartsMenuProps = {
 };
 
 export class ChartsMenu extends React.Component<ChartsMenuProps> {
-
-    constructor(props) {
-        super(props)
-    }
-
     render() {
         const hardwares = this.props.hardwares;
         const handleClick = this.props.handleClick;
@@ -18,9 +13,17 @@ export class ChartsMenu extends React.Component<ChartsMenuProps> {
         const hardwareSwitches = [];
         for (var i = 0; i < hardwares.length; i++) {
             if (hardwares[i][1])
-                hardwareSwitches.push(<button value={hardwares[i][0]} className="btn btn-sm btn-primary m-1" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e.currentTarget.value)}> {hardwares[i][0]} </button>)
+                hardwareSwitches.push(<button value={hardwares[i][0]}
+                    className="btn btn-sm btn-primary m-1"
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e.currentTarget.value)}>
+                        {hardwares[i][0]}
+                </button>)
             else
-                hardwareSwitches.push(<button value={hardwares[i][0]} className="btn btn-sm btn-secondary m-1" onClick={(e: React.MouseEvent<HTMLInputElement>) => handleClick(e.currentTarget.value)}> {hardwares[i][0]} </button>)
+                hardwareSwitches.push(<button value={hardwares[i][0]}
+                    className="btn btn-sm btn-secondary m-1"
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e.currentTarget.value)}>
+                        {hardwares[i][0]}
+                </button>)
         }
 
         return (
