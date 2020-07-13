@@ -12,8 +12,8 @@ import { ISensorReadingSeries } from "../models/ISensorReadingSeries";
 type HardwareChartProps = {
     sensorReadings: ISensorReadingSeries[],
     hardwareName: string,
-    sensors: [string, string, boolean][],
-    fullSensorName: (sensor: [string, string, boolean]) => string,
+    sensors: [string, string, string, boolean][],
+    fullSensorName: (sensor: [string, string, string, boolean]) => string,
     colors: string[]
 }
 
@@ -29,7 +29,7 @@ export class HardwareChart extends React.Component<HardwareChartProps> {
         for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
             var sensorReadingSeries = sensorReadingSerieses[sensorId];
 
-            if (!this.sensorChartEnabled(this.props.hardwareName, sensorReadingSeries.sensor.name))
+            if (!this.sensorChartEnabled(this.props.hardwareName, sensorReadingSeries.sensor.name, sensorReadingSeries.sensor.type))
                 continue;
 
             const min = isNaN(Number(sensorReadingSeries.sensor.minValue)) ? sensorReadingSeries.readings.min("value") : sensorReadingSeries.sensor.minValue;
@@ -77,7 +77,10 @@ export class HardwareChart extends React.Component<HardwareChartProps> {
         );
     }
 
-    private sensorChartEnabled(hardwareName: string, sensorName: string) {
-        return this.props.sensors.find(sensorSwitch => sensorSwitch[0] == hardwareName && sensorSwitch[1] == sensorName)[2];
+    private sensorChartEnabled(hardwareName: string, sensorName: string, sensorType: string) {
+        return this.props.sensors.find(sensorSwitch =>
+            sensorSwitch[0] == hardwareName &&
+            sensorSwitch[1] == sensorName &&
+            sensorSwitch[2] == sensorType)[3];
     }
 }

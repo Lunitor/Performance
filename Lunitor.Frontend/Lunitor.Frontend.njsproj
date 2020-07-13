@@ -59,6 +59,9 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="components\SensorsMenu.tsx" />
+    <TypeScriptCompile Include="models\IGraphQLSensorReadingResult.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="models\IHardware.ts" />
     <TypeScriptCompile Include="models\ISensor.ts" />
     <TypeScriptCompile Include="models\ISensorReading.ts">

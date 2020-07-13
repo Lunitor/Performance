@@ -4,6 +4,9 @@ import { ISensorReading } from "../models/ISensorReading";
 import { ISensorReadingSeries } from "../models/ISensorReadingSeries";
 import { ChartsMenu } from "../components/ChartsMenu";
 import { HardwareCharts } from "../components/HardwareCharts";
+import { ApolloClient, gql, InMemoryCache, NormalizedCacheObject, HttpLink } from 'apollo-boost'
+import { graphql, graphqlSync } from "graphql";
+import { IGraphQLSensorReadingResult } from "../models/IGraphQLSensorReadingResult";
 
 type ContentProps = {}
 type ContentState = {
@@ -14,6 +17,7 @@ type ContentState = {
 
 export class Content extends React.Component<ContentProps, ContentState> {
     timer: NodeJS.Timeout;
+    client: ApolloClient<NormalizedCacheObject>;
 
     constructor(props) {
         super(props);
@@ -23,6 +27,11 @@ export class Content extends React.Component<ContentProps, ContentState> {
             error: null,
             hardwares: null
         };
+
+        this.client = new ApolloClient({
+            cache: new InMemoryCache(),
+            link: new HttpLink({ uri: "/graphql" })
+        });
     }
 
     render() {
@@ -60,8 +69,26 @@ export class Content extends React.Component<ContentProps, ContentState> {
 
     private async fetchData() {
         try {
-            const data = await getResponse<ISensorReading[]>('/sensorreadings');
-            data.forEach(sensorReading => sensorReading.sensor.name += "-" + sensorReading.sensor.type);
+            const graphqlData = await this.client.query<IGraphQLSensorReadingResult>({
+                query: gql`query TestQuery {
+                                sensorreadings {
+                                timeStamp
+                                hardware{
+                                    name
+                                    type
+                                }
+                                sensor{
+                                    hardwareName
+                                    name
+                                    type
+                                    maxValue
+                                    minValue
+                                }
+                                value
+                                }
+                            }`});
+
+            var data = graphqlData.data.sensorreadings;
 
             var hardwares = Array.from(new Set(data.map(sensorreading => sensorreading.hardware.name)));
 

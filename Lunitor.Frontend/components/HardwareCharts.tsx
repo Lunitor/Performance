@@ -10,7 +10,7 @@ type HardwareChartsProp = {
 }
 
 type HardwareChartsState = {
-    sensors: [string, string, boolean][],
+    sensors: [string, string, string, boolean][],
     colors: string[]
 }
 
@@ -21,7 +21,7 @@ export class HardwareCharts extends React.Component<HardwareChartsProp, Hardware
 
         this.state = {
             sensors: this.props.sensorReadings
-                .map(sensorReading => [sensorReading.hardwareName, sensorReading.sensor.name, true]),
+                .map(sensorReading => [sensorReading.hardwareName, sensorReading.sensor.name, sensorReading.sensor.type, true]),
             colors: randomColor({
                 luminosity: 'dark',
                 hue: 'random',
@@ -71,20 +71,20 @@ export class HardwareCharts extends React.Component<HardwareChartsProp, Hardware
     handleSensorClick(hardwareSensorName: string) {
         var sensors = this.state.sensors;
 
-        var sensorState = sensors.find(sensor => this.fullSensorName(sensor) == hardwareSensorName)[2];
+        var sensorState = sensors.find(sensor => this.fullSensorName(sensor) == hardwareSensorName)[3];
 
-        if (sensors.filter(sensor => sensor[0] == hardwareSensorName.split('_')[0] && sensor[2]).length == 1
+        if (sensors.filter(sensor => sensor[0] == hardwareSensorName.split('_')[0] && sensor[3]).length == 1
             && sensorState)
             return;
 
-        sensors.find(sensor => this.fullSensorName(sensor) == hardwareSensorName)[2] = !sensorState;
+        sensors.find(sensor => this.fullSensorName(sensor) == hardwareSensorName)[3] = !sensorState;
 
         this.setState({
             sensors: sensors
         });
     }
 
-    private fullSensorName(sensor: [string, string, boolean]) {
-        return sensor[0] + "_" + sensor[1];
+    private fullSensorName(sensor: [string, string, string, boolean]) {
+        return sensor[0] + "_" + sensor[1] + "_" + sensor[2];
     }
 }
