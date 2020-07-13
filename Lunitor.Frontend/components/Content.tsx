@@ -4,9 +4,8 @@ import { ISensorReading } from "../models/ISensorReading";
 import { ISensorReadingSeries } from "../models/ISensorReadingSeries";
 import { ChartsMenu } from "../components/ChartsMenu";
 import { HardwareCharts } from "../components/HardwareCharts";
-import { ApolloClient, gql, InMemoryCache, NormalizedCacheObject, HttpLink } from 'apollo-boost'
-import { graphql, graphqlSync } from "graphql";
-import { IGraphQLSensorReadingResult } from "../models/IGraphQLSensorReadingResult";
+import { GqlApi } from "../api/GQLApi";
+import { IApi } from "../api/IApi";
 
 type ContentProps = {}
 type ContentState = {
@@ -17,7 +16,7 @@ type ContentState = {
 
 export class Content extends React.Component<ContentProps, ContentState> {
     timer: NodeJS.Timeout;
-    client: ApolloClient<NormalizedCacheObject>;
+    api: IApi;
 
     constructor(props) {
         super(props);
@@ -28,10 +27,7 @@ export class Content extends React.Component<ContentProps, ContentState> {
             hardwares: null
         };
 
-        this.client = new ApolloClient({
-            cache: new InMemoryCache(),
-            link: new HttpLink({ uri: "/graphql" })
-        });
+        this.api = new GqlApi;
     }
 
     render() {
@@ -56,9 +52,9 @@ export class Content extends React.Component<ContentProps, ContentState> {
     }
 
     async componentDidMount() {
-        await this.fetchData();
+        await this.loadSensorReadings();
 
-        this.timer = setInterval(() => this.fetchData(), 5000);
+        this.timer = setInterval(() => this.loadSensorReadings(), 5000);
     }
 
     async componentWillUnmount() {
@@ -67,28 +63,9 @@ export class Content extends React.Component<ContentProps, ContentState> {
         this.timer = null;
     }
 
-    private async fetchData() {
+    private async loadSensorReadings() {
         try {
-            const graphqlData = await this.client.query<IGraphQLSensorReadingResult>({
-                query: gql`query TestQuery {
-                                sensorreadings {
-                                timeStamp
-                                hardware{
-                                    name
-                                    type
-                                }
-                                sensor{
-                                    hardwareName
-                                    name
-                                    type
-                                    maxValue
-                                    minValue
-                                }
-                                value
-                                }
-                            }`});
-
-            var data = graphqlData.data.sensorreadings;
+            var data = await this.api.fetchData();
 
             var hardwares = Array.from(new Set(data.map(sensorreading => sensorreading.hardware.name)));
 
@@ -177,10 +154,4 @@ export class Content extends React.Component<ContentProps, ContentState> {
 Date.prototype.addHours = function (h: number) {
     this.setHours(this.getHours() + h);
     return this;
-}
-
-export async function getResponse<T>(request: RequestInfo): Promise<T> {
-    const response = await fetch(request);
-    const data = await response.json();
-    return data;
 }

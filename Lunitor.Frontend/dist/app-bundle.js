@@ -86,6 +86,64 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./api/GQLApi.ts":
+/*!***********************!*\
+  !*** ./api/GQLApi.ts ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GqlApi = void 0;
+const apollo_boost_1 = __webpack_require__(/*! apollo-boost */ "./node_modules/apollo-boost/lib/bundle.esm.js");
+class GqlApi {
+    constructor() {
+        this.client = new apollo_boost_1.ApolloClient({
+            cache: new apollo_boost_1.InMemoryCache(),
+            link: new apollo_boost_1.HttpLink({ uri: "/graphql" })
+        });
+    }
+    fetchData() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const graphqlData = yield this.client.query({
+                query: apollo_boost_1.gql `query TestQuery {
+                            sensorreadings {
+                            timeStamp
+                            hardware{
+                                name
+                                type
+                            }
+                            sensor{
+                                hardwareName
+                                name
+                                type
+                                maxValue
+                                minValue
+                            }
+                            value
+                            }
+                        }`
+            });
+            return graphqlData.data.sensorreadings;
+        });
+    }
+}
+exports.GqlApi = GqlApi;
+
+
+/***/ }),
+
 /***/ "./app.tsx":
 /*!*****************!*\
   !*** ./app.tsx ***!
@@ -165,12 +223,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getResponse = exports.Content = void 0;
+exports.Content = void 0;
 const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 const pondjs_1 = __webpack_require__(/*! pondjs */ "./node_modules/pondjs/lib/entry.js");
 const ChartsMenu_1 = __webpack_require__(/*! ../components/ChartsMenu */ "./components/ChartsMenu.tsx");
 const HardwareCharts_1 = __webpack_require__(/*! ../components/HardwareCharts */ "./components/HardwareCharts.tsx");
-const apollo_boost_1 = __webpack_require__(/*! apollo-boost */ "./node_modules/apollo-boost/lib/bundle.esm.js");
+const GQLApi_1 = __webpack_require__(/*! ../api/GQLApi */ "./api/GQLApi.ts");
 class Content extends React.Component {
     constructor(props) {
         super(props);
@@ -179,10 +237,7 @@ class Content extends React.Component {
             error: null,
             hardwares: null
         };
-        this.client = new apollo_boost_1.ApolloClient({
-            cache: new apollo_boost_1.InMemoryCache(),
-            link: new apollo_boost_1.HttpLink({ uri: "/graphql" })
-        });
+        this.api = new GQLApi_1.GqlApi;
     }
     render() {
         const sensorReadings = this.state.sensorReadings;
@@ -202,8 +257,8 @@ class Content extends React.Component {
     }
     componentDidMount() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.fetchData();
-            this.timer = setInterval(() => this.fetchData(), 5000);
+            yield this.loadSensorReadings();
+            this.timer = setInterval(() => this.loadSensorReadings(), 5000);
         });
     }
     componentWillUnmount() {
@@ -212,29 +267,10 @@ class Content extends React.Component {
             this.timer = null;
         });
     }
-    fetchData() {
+    loadSensorReadings() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const graphqlData = yield this.client.query({
-                    query: apollo_boost_1.gql `query TestQuery {
-                                sensorreadings {
-                                timeStamp
-                                hardware{
-                                    name
-                                    type
-                                }
-                                sensor{
-                                    hardwareName
-                                    name
-                                    type
-                                    maxValue
-                                    minValue
-                                }
-                                value
-                                }
-                            }`
-                });
-                var data = graphqlData.data.sensorreadings;
+                var data = yield this.api.fetchData();
                 var hardwares = Array.from(new Set(data.map(sensorreading => sensorreading.hardware.name)));
                 var sensorReadingsByHardware = [];
                 for (var hardwareId = 0; hardwareId < hardwares.length; hardwareId++) {
@@ -310,14 +346,6 @@ Date.prototype.addHours = function (h) {
     this.setHours(this.getHours() + h);
     return this;
 };
-function getResponse(request) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const response = yield fetch(request);
-        const data = yield response.json();
-        return data;
-    });
-}
-exports.getResponse = getResponse;
 
 
 /***/ }),
