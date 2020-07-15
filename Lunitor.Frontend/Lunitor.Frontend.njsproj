@@ -7,7 +7,7 @@
     <EnableTypeScript>true</EnableTypeScript>
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
     <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
-    <JavaScriptTestFramework>mocha</JavaScriptTestFramework>
+    <JavaScriptTestFramework>Jest</JavaScriptTestFramework>
     <SaveNodeJsSettingsInProjectFile>True</SaveNodeJsSettingsInProjectFile>
     <JavaScriptTestRoot>tests\</JavaScriptTestRoot>
   </PropertyGroup>
@@ -39,6 +39,9 @@
     <Content Include="dist\app-bundle.js" />
     <Content Include="dist\app-bundle.js.map" />
     <Content Include="index.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="jest.config.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="server.js" />
@@ -82,9 +85,14 @@
     <TypeScriptCompile Include="models\ISensorReadingSeries.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="test\components\ChartsMenu.test.tsx">
+      <TestFramework>Jest</TestFramework>
+      <Publish>True</Publish>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="test\components\SensorsMenu.test.tsx">
       <SubType>Code</SubType>
-      <TestFramework>Mocha</TestFramework>
+      <TestFramework>Jest</TestFramework>
+      <Publish>True</Publish>
     </TypeScriptCompile>
   </ItemGroup>
   <ItemGroup>

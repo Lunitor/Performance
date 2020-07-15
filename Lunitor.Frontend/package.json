@@ -26,15 +26,17 @@
   },
   "scripts": {
     "build": "webpack-cli app.tsx --config webpack-config.js",
-    "test": "mocha --require jsdom-global/register --require ts-node/register test/**/*.test.{ts,tsx}"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.0",
     "@testing-library/react": "^10.4.6",
-    "@types/mocha": "^8.0.0",
+    "@types/jest": "^26.0.4",
+    "babel-jest": "^26.1.0",
     "http-proxy-middleware": "^1.0.4",
-    "jsdom": "^16.3.0",
-    "jsdom-global": "^3.0.2",
-    "mocha": "^8.0.1",
+    "jest": "^26.1.0",
+    "ts-jest": "^26.1.2",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5"
   }

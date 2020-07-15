@@ -1,6 +1,5 @@
-import assert = require('assert');
 import { render } from '@testing-library/react';
-import React = require('react');
+import * as React from "react";
 import { SensorsMenu } from '../../components/SensorsMenu';
 
 describe("SensorMenu", () => {
@@ -32,6 +31,6 @@ describe("SensorMenu", () => {
 
         const buttonCount = container.getElementsByTagName('button').length;
 
-        assert.equal(buttonCount, sensors.length);
+        expect(buttonCount).toEqual(sensors.length);
     });
 });
