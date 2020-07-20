@@ -17,11 +17,32 @@ type HardwareChartProps = {
     colors: string[]
 }
 
-export class HardwareChart extends React.Component<HardwareChartProps> {
+type HardwareChartStates = {
+    tracker: Date,
+    trackerInfos: any[]
+}
+
+export interface TrackerValue {
+    sensor: string,
+    value: number
+}
+
+export class HardwareChart extends React.Component<HardwareChartProps, HardwareChartStates> {
+
+    constructor(props)
+    {
+        super(props);
+        this.state = {
+            tracker: new Date(Date.now()),
+            trackerInfos: []
+        };
+
+        this.handleTrackerChange = this.handleTrackerChange.bind(this);
+    }
+
     render() {
 
-        var sensorReadingSerieses = this.props.sensorReadings.filter(sensorReading =>
-            sensorReading.hardwareName == this.props.hardwareName);
+        var sensorReadingSerieses = this.props.sensorReadings;
 
         const yAxises = [];
         const lineCharts = [];
@@ -66,8 +87,11 @@ export class HardwareChart extends React.Component<HardwareChartProps> {
                 format="%Y-%m-%d %H:%M:%S"
                 timeAxisHeight={130}
                 timeAxisAngledLabels={true}
-                title={this.props.hardwareName}>
-                <ChartRow height="500">
+                title={this.props.hardwareName}
+                onTrackerChanged={this.handleTrackerChange}
+                trackerPosition={this.state.tracker}>
+                <ChartRow height="500"
+                    trackerInfoValues={this.state.trackerInfos}>
                     {yAxises}
                     <Charts>
                         {lineCharts}
@@ -75,6 +99,31 @@ export class HardwareChart extends React.Component<HardwareChartProps> {
                 </ChartRow>
             </ChartContainer>
         );
+    }
+
+    private handleTrackerChange(tracker: Date) {
+        const trackerInfos: any[] = [];
+
+        if (tracker) {
+            var sensorReadingSerieses = this.props.sensorReadings;
+
+            for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
+                var sensorReadingSeries = sensorReadingSerieses[sensorId];
+
+                if (!this.sensorChartEnabled(this.props.hardwareName, sensorReadingSeries.sensor.name, sensorReadingSeries.sensor.type))
+                    continue;
+
+                const sensorFullName = sensorReadingSeries.sensor.name + "-" + sensorReadingSeries.sensor.type;
+                const value = sensorReadingSeries.readings.atTime(tracker).get("value");
+
+                trackerInfos.push({ label: sensorFullName, value: value })
+            }
+        }
+
+        this.setState({
+            tracker: tracker,
+            trackerInfos: trackerInfos
+        });
     }
 
     private sensorChartEnabled(hardwareName: string, sensorName: string, sensorType: string) {

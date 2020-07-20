@@ -54,7 +54,8 @@ export class HardwareCharts extends React.Component<HardwareChartsProp, Hardware
                     <div className="row">
                         <div className="col-12 d-flex justify-content-center ">
                             <HardwareChart
-                                sensorReadings={this.props.sensorReadings}
+                                sensorReadings={this.props.sensorReadings
+                                    .filter(sensorReadings => sensorReadings.hardwareName == hardwareName)}
                                 hardwareName={hardwareName}
                                 sensors={this.state.sensors}
                                 fullSensorName={this.fullSensorName}

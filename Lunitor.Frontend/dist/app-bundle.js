@@ -364,8 +364,17 @@ exports.HardwareChart = void 0;
 const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 const react_timeseries_charts_1 = __webpack_require__(/*! react-timeseries-charts */ "./node_modules/react-timeseries-charts/lib/entry.js");
 class HardwareChart extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            tracker: new Date(Date.now()),
+            trackerInfos: []
+        };
+        this.handleTrackerChange = this.handleTrackerChange.bind(this);
+    }
     render() {
-        var sensorReadingSerieses = this.props.sensorReadings.filter(sensorReading => sensorReading.hardwareName == this.props.hardwareName);
+        var sensorReadingSerieses = this.props.sensorReadings /*.filter(sensorReading =>
+            sensorReading.hardwareName == this.props.hardwareName)*/;
         const yAxises = [];
         const lineCharts = [];
         for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
@@ -378,10 +387,29 @@ class HardwareChart extends React.Component {
             yAxises.push(React.createElement(react_timeseries_charts_1.YAxis, { id: sensorReadingSeries.sensor.name, label: sensorReadingSeries.sensor.type, min: min, max: max, width: "50", type: "linear", format: ",.2f", style: style.axisStyle("value") }));
             lineCharts.push(React.createElement(react_timeseries_charts_1.LineChart, { key: this.props.fullSensorName(this.props.sensors[sensorId]), axis: sensorReadingSeries.sensor.name, series: sensorReadingSeries.readings, column: [sensorReadingSeries.sensor.type], style: style }));
         }
-        return (React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: this.props.hardwareName },
-            React.createElement(react_timeseries_charts_1.ChartRow, { height: "500" },
+        return (React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: this.props.hardwareName, onTrackerChanged: this.handleTrackerChange, trackerPosition: this.state.tracker },
+            React.createElement(react_timeseries_charts_1.ChartRow, { height: "500", trackerInfoValues: this.state.trackerInfos },
                 yAxises,
                 React.createElement(react_timeseries_charts_1.Charts, null, lineCharts))));
+    }
+    handleTrackerChange(tracker) {
+        const trackerInfos = [];
+        if (tracker) {
+            var sensorReadingSerieses = this.props.sensorReadings /*.filter(sensorReading =>
+                sensorReading.hardwareName == this.props.hardwareName)*/;
+            for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
+                var sensorReadingSeries = sensorReadingSerieses[sensorId];
+                if (!this.sensorChartEnabled(this.props.hardwareName, sensorReadingSeries.sensor.name, sensorReadingSeries.sensor.type))
+                    continue;
+                const sensorFullName = sensorReadingSeries.sensor.name + "-" + sensorReadingSeries.sensor.type;
+                const value = sensorReadingSeries.readings.atTime(tracker).get("value");
+                trackerInfos.push({ label: sensorFullName, value: value });
+            }
+        }
+        this.setState({
+            tracker: tracker,
+            trackerInfos: trackerInfos
+        });
     }
     sensorChartEnabled(hardwareName, sensorName, sensorType) {
         return this.props.sensors.find(sensorSwitch => sensorSwitch[0] == hardwareName &&
@@ -434,7 +462,8 @@ class HardwareCharts extends React.Component {
                     React.createElement(SensorsMenu_1.SensorsMenu, { hardwareName: hardwareName, sensors: this.state.sensors, sensorClickHandler: this.handleSensorClick.bind(this), fullSensorName: this.fullSensorName, colors: this.state.colors })),
                 React.createElement("div", { className: "row" },
                     React.createElement("div", { className: "col-12 d-flex justify-content-center " },
-                        React.createElement(HardwareChart_1.HardwareChart, { sensorReadings: this.props.sensorReadings, hardwareName: hardwareName, sensors: this.state.sensors, fullSensorName: this.fullSensorName, colors: this.state.colors })))));
+                        React.createElement(HardwareChart_1.HardwareChart, { sensorReadings: this.props.sensorReadings
+                                .filter(sensorReadings => sensorReadings.hardwareName == hardwareName), hardwareName: hardwareName, sensors: this.state.sensors, fullSensorName: this.fullSensorName, colors: this.state.colors })))));
         }
         return (charts);
     }
