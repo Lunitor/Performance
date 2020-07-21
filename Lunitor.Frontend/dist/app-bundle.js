@@ -371,10 +371,10 @@ class HardwareChart extends React.Component {
             trackerInfos: []
         };
         this.handleTrackerChange = this.handleTrackerChange.bind(this);
+        this.calculateTrackerInfoWidth = this.calculateTrackerInfoWidth.bind(this);
     }
     render() {
-        var sensorReadingSerieses = this.props.sensorReadings /*.filter(sensorReading =>
-            sensorReading.hardwareName == this.props.hardwareName)*/;
+        var sensorReadingSerieses = this.props.sensorReadings;
         const yAxises = [];
         const lineCharts = [];
         for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
@@ -388,15 +388,23 @@ class HardwareChart extends React.Component {
             lineCharts.push(React.createElement(react_timeseries_charts_1.LineChart, { key: this.props.fullSensorName(this.props.sensors[sensorId]), axis: sensorReadingSeries.sensor.name, series: sensorReadingSeries.readings, column: [sensorReadingSeries.sensor.type], style: style }));
         }
         return (React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: this.props.hardwareName, onTrackerChanged: this.handleTrackerChange, trackerPosition: this.state.tracker },
-            React.createElement(react_timeseries_charts_1.ChartRow, { height: "500", trackerInfoValues: this.state.trackerInfos },
+            React.createElement(react_timeseries_charts_1.ChartRow, { height: "500", trackerInfoValues: this.state.trackerInfos, trackerInfoHeight: this.state.trackerInfos.length * 14 + 4, trackerInfoWidth: this.calculateTrackerInfoWidth() },
                 yAxises,
                 React.createElement(react_timeseries_charts_1.Charts, null, lineCharts))));
+    }
+    calculateTrackerInfoWidth() {
+        var width = 0;
+        for (let info of this.state.trackerInfos) {
+            const infoLength = (info.label + info.value).length;
+            if (infoLength > width)
+                width = infoLength;
+        }
+        return width * 6 + 15;
     }
     handleTrackerChange(tracker) {
         const trackerInfos = [];
         if (tracker) {
-            var sensorReadingSerieses = this.props.sensorReadings /*.filter(sensorReading =>
-                sensorReading.hardwareName == this.props.hardwareName)*/;
+            var sensorReadingSerieses = this.props.sensorReadings;
             for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
                 var sensorReadingSeries = sensorReadingSerieses[sensorId];
                 if (!this.sensorChartEnabled(this.props.hardwareName, sensorReadingSeries.sensor.name, sensorReadingSeries.sensor.type))

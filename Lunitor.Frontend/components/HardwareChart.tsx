@@ -22,9 +22,9 @@ type HardwareChartStates = {
     trackerInfos: any[]
 }
 
-export interface TrackerValue {
-    sensor: string,
-    value: number
+export interface ITrackerInfo {
+    label: string,
+    value: string
 }
 
 export class HardwareChart extends React.Component<HardwareChartProps, HardwareChartStates> {
@@ -38,6 +38,7 @@ export class HardwareChart extends React.Component<HardwareChartProps, HardwareC
         };
 
         this.handleTrackerChange = this.handleTrackerChange.bind(this);
+        this.calculateTrackerInfoWidth = this.calculateTrackerInfoWidth.bind(this);
     }
 
     render() {
@@ -91,7 +92,9 @@ export class HardwareChart extends React.Component<HardwareChartProps, HardwareC
                 onTrackerChanged={this.handleTrackerChange}
                 trackerPosition={this.state.tracker}>
                 <ChartRow height="500"
-                    trackerInfoValues={this.state.trackerInfos}>
+                    trackerInfoValues={this.state.trackerInfos}
+                    trackerInfoHeight={this.state.trackerInfos.length * 14 + 4}
+                    trackerInfoWidth={this.calculateTrackerInfoWidth()}>
                     {yAxises}
                     <Charts>
                         {lineCharts}
@@ -99,6 +102,17 @@ export class HardwareChart extends React.Component<HardwareChartProps, HardwareC
                 </ChartRow>
             </ChartContainer>
         );
+    }
+
+    calculateTrackerInfoWidth() {
+        var width = 0;
+        for (let info of this.state.trackerInfos as Array<ITrackerInfo>) {
+            const infoLength = (info.label + info.value).length;
+            if (infoLength > width)
+                width = infoLength;
+        }
+
+        return width*6 + 15;
     }
 
     private handleTrackerChange(tracker: Date) {
