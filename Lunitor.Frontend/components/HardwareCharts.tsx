@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ISensorReadingSeries } from "../models/ISensorReadingSeries";
 import { SensorsMenu } from "./SensorsMenu";
-import { HardwareChart } from "./HardwareChart";
+import { HardwareChart } from "./hardwarechart/HardwareChart";
 import randomColor = require("randomcolor");
 
 type HardwareChartsProp = {

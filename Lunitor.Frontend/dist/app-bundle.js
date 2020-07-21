@@ -350,86 +350,6 @@ Date.prototype.addHours = function (h) {
 
 /***/ }),
 
-/***/ "./components/HardwareChart.tsx":
-/*!**************************************!*\
-  !*** ./components/HardwareChart.tsx ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.HardwareChart = void 0;
-const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-const react_timeseries_charts_1 = __webpack_require__(/*! react-timeseries-charts */ "./node_modules/react-timeseries-charts/lib/entry.js");
-class HardwareChart extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            tracker: new Date(Date.now()),
-            trackerInfos: []
-        };
-        this.handleTrackerChange = this.handleTrackerChange.bind(this);
-        this.calculateTrackerInfoWidth = this.calculateTrackerInfoWidth.bind(this);
-    }
-    render() {
-        var sensorReadingSerieses = this.props.sensorReadings;
-        const yAxises = [];
-        const lineCharts = [];
-        for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
-            var sensorReadingSeries = sensorReadingSerieses[sensorId];
-            if (!this.sensorChartEnabled(this.props.hardwareName, sensorReadingSeries.sensor.name, sensorReadingSeries.sensor.type))
-                continue;
-            const min = isNaN(Number(sensorReadingSeries.sensor.minValue)) ? sensorReadingSeries.readings.min("value") : sensorReadingSeries.sensor.minValue;
-            const max = isNaN(Number(sensorReadingSeries.sensor.maxValue)) ? sensorReadingSeries.readings.max("value") : sensorReadingSeries.sensor.maxValue;
-            const style = react_timeseries_charts_1.styler([{ key: "value", color: this.props.colors[sensorId] }]);
-            yAxises.push(React.createElement(react_timeseries_charts_1.YAxis, { id: sensorReadingSeries.sensor.name, label: sensorReadingSeries.sensor.type, min: min, max: max, width: "50", type: "linear", format: ",.2f", style: style.axisStyle("value") }));
-            lineCharts.push(React.createElement(react_timeseries_charts_1.LineChart, { key: this.props.fullSensorName(this.props.sensors[sensorId]), axis: sensorReadingSeries.sensor.name, series: sensorReadingSeries.readings, column: [sensorReadingSeries.sensor.type], style: style }));
-        }
-        return (React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: this.props.hardwareName, onTrackerChanged: this.handleTrackerChange, trackerPosition: this.state.tracker },
-            React.createElement(react_timeseries_charts_1.ChartRow, { height: "500", trackerInfoValues: this.state.trackerInfos, trackerInfoHeight: this.state.trackerInfos.length * 14 + 4, trackerInfoWidth: this.calculateTrackerInfoWidth() },
-                yAxises,
-                React.createElement(react_timeseries_charts_1.Charts, null, lineCharts))));
-    }
-    calculateTrackerInfoWidth() {
-        var width = 0;
-        for (let info of this.state.trackerInfos) {
-            const infoLength = (info.label + info.value).length;
-            if (infoLength > width)
-                width = infoLength;
-        }
-        return width * 6 + 15;
-    }
-    handleTrackerChange(tracker) {
-        const trackerInfos = [];
-        if (tracker) {
-            var sensorReadingSerieses = this.props.sensorReadings;
-            for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
-                var sensorReadingSeries = sensorReadingSerieses[sensorId];
-                if (!this.sensorChartEnabled(this.props.hardwareName, sensorReadingSeries.sensor.name, sensorReadingSeries.sensor.type))
-                    continue;
-                const sensorFullName = sensorReadingSeries.sensor.name + "-" + sensorReadingSeries.sensor.type;
-                const value = sensorReadingSeries.readings.atTime(tracker).get("value");
-                trackerInfos.push({ label: sensorFullName, value: value });
-            }
-        }
-        this.setState({
-            tracker: tracker,
-            trackerInfos: trackerInfos
-        });
-    }
-    sensorChartEnabled(hardwareName, sensorName, sensorType) {
-        return this.props.sensors.find(sensorSwitch => sensorSwitch[0] == hardwareName &&
-            sensorSwitch[1] == sensorName &&
-            sensorSwitch[2] == sensorType)[3];
-    }
-}
-exports.HardwareChart = HardwareChart;
-
-
-/***/ }),
-
 /***/ "./components/HardwareCharts.tsx":
 /*!***************************************!*\
   !*** ./components/HardwareCharts.tsx ***!
@@ -443,7 +363,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HardwareCharts = void 0;
 const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 const SensorsMenu_1 = __webpack_require__(/*! ./SensorsMenu */ "./components/SensorsMenu.tsx");
-const HardwareChart_1 = __webpack_require__(/*! ./HardwareChart */ "./components/HardwareChart.tsx");
+const HardwareChart_1 = __webpack_require__(/*! ./hardwarechart/HardwareChart */ "./components/hardwarechart/HardwareChart.tsx");
 const randomColor = __webpack_require__(/*! randomcolor */ "./node_modules/randomcolor/randomColor.js");
 class HardwareCharts extends React.Component {
     constructor(prop) {
@@ -526,6 +446,86 @@ class SensorsMenu extends React.Component {
     }
 }
 exports.SensorsMenu = SensorsMenu;
+
+
+/***/ }),
+
+/***/ "./components/hardwarechart/HardwareChart.tsx":
+/*!****************************************************!*\
+  !*** ./components/hardwarechart/HardwareChart.tsx ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HardwareChart = void 0;
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const react_timeseries_charts_1 = __webpack_require__(/*! react-timeseries-charts */ "./node_modules/react-timeseries-charts/lib/entry.js");
+class HardwareChart extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            tracker: new Date(Date.now()),
+            trackerInfos: []
+        };
+        this.handleTrackerChange = this.handleTrackerChange.bind(this);
+        this.calculateTrackerInfoWidth = this.calculateTrackerInfoWidth.bind(this);
+    }
+    render() {
+        var sensorReadingSerieses = this.props.sensorReadings;
+        const yAxises = [];
+        const lineCharts = [];
+        for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
+            var sensorReadingSeries = sensorReadingSerieses[sensorId];
+            if (!this.sensorChartEnabled(this.props.hardwareName, sensorReadingSeries.sensor.name, sensorReadingSeries.sensor.type))
+                continue;
+            const min = isNaN(Number(sensorReadingSeries.sensor.minValue)) ? sensorReadingSeries.readings.min("value") : sensorReadingSeries.sensor.minValue;
+            const max = isNaN(Number(sensorReadingSeries.sensor.maxValue)) ? sensorReadingSeries.readings.max("value") : sensorReadingSeries.sensor.maxValue;
+            const style = react_timeseries_charts_1.styler([{ key: "value", color: this.props.colors[sensorId] }]);
+            yAxises.push(React.createElement(react_timeseries_charts_1.YAxis, { id: sensorReadingSeries.sensor.name, label: sensorReadingSeries.sensor.type, min: min, max: max, width: "50", type: "linear", format: ",.2f", style: style.axisStyle("value") }));
+            lineCharts.push(React.createElement(react_timeseries_charts_1.LineChart, { key: this.props.fullSensorName(this.props.sensors[sensorId]), axis: sensorReadingSeries.sensor.name, series: sensorReadingSeries.readings, column: [sensorReadingSeries.sensor.type], style: style }));
+        }
+        return (React.createElement(react_timeseries_charts_1.ChartContainer, { timeRange: sensorReadingSerieses[0].readings.timerange(), width: 1500, format: "%Y-%m-%d %H:%M:%S", timeAxisHeight: 130, timeAxisAngledLabels: true, title: this.props.hardwareName, onTrackerChanged: this.handleTrackerChange, trackerPosition: this.state.tracker },
+            React.createElement(react_timeseries_charts_1.ChartRow, { height: "500", trackerInfoValues: this.state.trackerInfos, trackerInfoHeight: this.state.trackerInfos.length * 14 + 4, trackerInfoWidth: this.calculateTrackerInfoWidth() },
+                yAxises,
+                React.createElement(react_timeseries_charts_1.Charts, null, lineCharts))));
+    }
+    handleTrackerChange(tracker) {
+        const trackerInfos = [];
+        if (tracker) {
+            var sensorReadingSerieses = this.props.sensorReadings;
+            for (var sensorId = 0; sensorId < sensorReadingSerieses.length; sensorId++) {
+                var sensorReadingSeries = sensorReadingSerieses[sensorId];
+                if (!this.sensorChartEnabled(this.props.hardwareName, sensorReadingSeries.sensor.name, sensorReadingSeries.sensor.type))
+                    continue;
+                const sensorFullName = sensorReadingSeries.sensor.name + "-" + sensorReadingSeries.sensor.type;
+                const value = sensorReadingSeries.readings.atTime(tracker).get("value");
+                trackerInfos.push({ label: sensorFullName, value: value });
+            }
+        }
+        this.setState({
+            tracker: tracker,
+            trackerInfos: trackerInfos
+        });
+    }
+    sensorChartEnabled(hardwareName, sensorName, sensorType) {
+        return this.props.sensors.find(sensorSwitch => sensorSwitch[0] == hardwareName &&
+            sensorSwitch[1] == sensorName &&
+            sensorSwitch[2] == sensorType)[3];
+    }
+    calculateTrackerInfoWidth() {
+        var width = 0;
+        for (let info of this.state.trackerInfos) {
+            const infoLength = (info.label + info.value).length;
+            if (infoLength > width)
+                width = infoLength;
+        }
+        return width * 6 + 15;
+    }
+}
+exports.HardwareChart = HardwareChart;
 
 
 /***/ }),

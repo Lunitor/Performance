@@ -35,7 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="components\Content.tsx" />
-    <Content Include="components\HardwareChart.tsx" />
+    <Content Include="components\hardwarechart\HardwareChart.tsx" />
     <Content Include="dist\app-bundle.js" />
     <Content Include="dist\app-bundle.js.map" />
     <Content Include="index.html">
@@ -73,6 +73,7 @@
     <TypeScriptCompile Include="components\HardwareCharts.tsx">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="components\hardwarechart\ITrackerInfo.ts" />
     <TypeScriptCompile Include="components\SensorsMenu.tsx" />
     <TypeScriptCompile Include="models\IGraphQLSensorReadingResult.ts">
       <SubType>Code</SubType>
@@ -96,6 +97,7 @@
     </TypeScriptCompile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="components\hardwarechart\" />
     <Folder Include="dist\" />
     <Folder Include="components\" />
     <Folder Include="models\" />
