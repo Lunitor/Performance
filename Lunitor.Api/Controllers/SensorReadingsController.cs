@@ -1,4 +1,4 @@
-﻿using Lunitor.Api.Cache;
+﻿using Lunitor.Core.Interfaces;
 using Lunitor.Shared.Dto;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -9,17 +9,18 @@ namespace Lunitor.Api.Controllers
     [ApiController]
     public class SensorReadingsController : ControllerBase
     {
-        private readonly ISensorCacheReader _sensorCacheReader;
+        private readonly ISensorReadingRepository _sensorReadingRepository;
 
-        public SensorReadingsController(ISensorCacheReader sensorCacheReader)
+        public SensorReadingsController(ISensorReadingRepository sensorReadingRepository)
         {
-            _sensorCacheReader = sensorCacheReader;
+            _sensorReadingRepository = sensorReadingRepository;
         }
 
         [HttpGet]
         public IEnumerable<SensorReadingDto> GetAll()
         {
-            return _sensorCacheReader.GetAll();
+            return _sensorReadingRepository.Get();
+
         }
     }
 }

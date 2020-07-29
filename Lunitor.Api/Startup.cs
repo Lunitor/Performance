@@ -1,8 +1,9 @@
 using GraphQL.Server.Ui.Playground;
-using Lunitor.Api.Cache;
 using Lunitor.Api.GraphQL;
-using Lunitor.Api.Services;
-using Lunitor.Shared.Json;
+using Lunitor.Core.Interfaces;
+using Lunitor.Infrastructure;
+using Lunitor.Infrastructure.Cache;
+using Lunitor.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,7 +24,10 @@ namespace Lunitor.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddServices();
+            services.AddHostedService<PeriodicReader>();
+            services.AddHarwareMonitorAPI();
+
+            services.AddSingleton<ISensorReadingRepository, SensorReadingRepository>();
 
             services.AddCustomGraphQL();
 

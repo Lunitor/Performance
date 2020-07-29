@@ -1,5 +1,5 @@
-﻿using Lunitor.Api.Cache;
-using Lunitor.Api.Controllers;
+﻿using Lunitor.Api.Controllers;
+using Lunitor.Core.Interfaces;
 using Lunitor.Shared.Dto;
 using Moq;
 using System;
@@ -12,13 +12,13 @@ namespace Lunitor.Api.UnitTests.Controllers
     public class SensorReadingsControllerTests
     {
         private SensorReadingsController _sensorReadingsController;
-        private Mock<ISensorCacheReader> _sensorCacheReaderMock;
+        private Mock<ISensorReadingRepository> _sensorReadingRepositoryMock;
 
         public SensorReadingsControllerTests()
         {
-            _sensorCacheReaderMock = new Mock<ISensorCacheReader>();
+            _sensorReadingRepositoryMock = new Mock<ISensorReadingRepository>();
 
-            _sensorReadingsController = new SensorReadingsController(_sensorCacheReaderMock.Object);
+            _sensorReadingsController = new SensorReadingsController(_sensorReadingRepositoryMock.Object);
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace Lunitor.Api.UnitTests.Controllers
         [Fact]
         public void GetAllShouldReturnAllSensorReadingData()
         {
-            _sensorCacheReaderMock.Setup(scr => scr.GetAll())
+            _sensorReadingRepositoryMock.Setup(scr => scr.Get(null, null, It.IsAny<float>()))
                 .Returns(SensorReadingsTestData);
 
             var result = _sensorReadingsController.GetAll();

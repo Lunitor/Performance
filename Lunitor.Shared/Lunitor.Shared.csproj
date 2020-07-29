@@ -8,8 +8,4 @@
     <PackageReference Include="System.Text.Json" Version="4.7.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Lunitor.HardwareMonitorAPI\Lunitor.HardwareMonitorAPI.csproj" />
-  </ItemGroup>
-
 </Project>

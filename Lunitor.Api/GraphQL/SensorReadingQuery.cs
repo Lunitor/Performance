@@ -1,7 +1,7 @@
 ﻿using GraphQL;
 using GraphQL.Types;
 using Lunitor.Api.GraphQL.Types;
-using Lunitor.Api.Services;
+using Lunitor.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 
@@ -9,11 +9,11 @@ namespace Lunitor.Api.GraphQL
 {
     internal class SensorReadingQuery : ObjectGraphType
     {
-        private readonly ISensorReadingService _sensorReadingService;
+        private readonly ISensorReadingRepository _sensorReadingRepository;
 
-        public SensorReadingQuery(ISensorReadingService sensorReadingService)
+        public SensorReadingQuery(ISensorReadingRepository sensorReadingRepository)
         {
-            _sensorReadingService = sensorReadingService;
+            _sensorReadingRepository = sensorReadingRepository;
 
             Field<ListGraphType<SensorReadingType>>("sensorreadings",
                 arguments: new QueryArguments(new List<QueryArgument>
@@ -38,7 +38,7 @@ namespace Lunitor.Api.GraphQL
 
                     var criticalValuePercent = ClipValue(context);
 
-                    return _sensorReadingService.Get(from: fromDate, to: toDate, criticalValuePercent: criticalValuePercent);
+                    return _sensorReadingRepository.Get(from: fromDate, to: toDate, criticalValuePercent: criticalValuePercent);
 
                 });
         }

@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <None Remove="HidSharp.dll" />
+    <None Remove="LibreHardwareMonitorLib.dll" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Ardalis.GuardClauses" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.6" />
+    <PackageReference Include="StackExchange.Redis" Version="2.1.58" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lunitor.Core\Lunitor.Core.csproj" />
+    <ProjectReference Include="..\Lunitor.Shared\Lunitor.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="HidSharp">
+      <HintPath>HidSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="LibreHardwareMonitorLib">
+      <HintPath>LibreHardwareMonitorLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
