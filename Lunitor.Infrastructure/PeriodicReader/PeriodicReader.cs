@@ -1,6 +1,5 @@
 using Lunitor.Core;
 using Lunitor.Core.Interfaces.Cache;
-using Lunitor.Infrastructure;
 using Lunitor.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -9,7 +8,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Lunitor.Api
+namespace Lunitor.Infrastructure.PeriodicReader
 {
     internal class PeriodicReader : BackgroundService
     {

@@ -4,7 +4,7 @@ using Lunitor.Core.Models;
 using System;
 using System.Collections.Generic;
 
-namespace Lunitor.Infrastructure
+namespace Lunitor.Infrastructure.PeriodicReader
 {
     public class HardwareMonitor : IHardwareMonitor
     {
