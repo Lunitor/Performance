@@ -21,7 +21,7 @@ namespace Lunitor.DataReader.Cache
             _cache = cache;
             _server = server;
 
-            ExpirationTimeInMinutes = configuration.GetValue<int>("CacheWriter:ExpirationTime");
+            ExpirationTimeInMinutes = configuration.GetValue<int>(ConfigurationConstants.ExpirationTimeKey);
 
             _serializerOptions = new JsonSerializerOptions();
             _serializerOptions.Converters.Add(new FloatStringConverter());

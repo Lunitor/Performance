@@ -26,7 +26,7 @@ namespace Lunitor.DataReader
             ISensorCacheCleaner sensorCacheCleaner)
         {
             _logger = logger;
-            _periodicity = configuration.GetValue<int>("Reader:Periodicity");
+            _periodicity = configuration.GetValue<int>(ConfigurationConstants.PeriodicityKey);
 
             _hardwareMonitor = hardwareMonitor;
             _sensorCacheWriter = sensorCacheWriter;
@@ -53,35 +53,44 @@ namespace Lunitor.DataReader
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Running at: {time}", DateTimeOffset.Now);
-                
-                _logger.LogInformation("Cleaning sensor readings cache ...");
-                try
-                {
-                    _sensorCacheCleaner.Clean();
 
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, $"Failed to clean sensor readings cache");
-                }
+                CleanSensorReadingCache();
 
-                _logger.LogInformation("Sensor reading...");
-                try
-                {
-                    var readings = _hardwareMonitor.Read();
-                    foreach (var reading in readings)
-                    {
-                        Console.WriteLine($"{reading.TimeStamp} {reading.Hardware.Type} {reading.Hardware.Name} {reading.Sensor.Type} {reading.Sensor.Name} {reading.Value}");
-                    }
+                ReadSensorData();
 
-                    _sensorCacheWriter.Add(readings.Select(sr => sr.Map()));
-                }
-                catch (Exception ex)
+                await Task.Delay(_periodicity * 1000, stoppingToken);
+            }
+        }
+
+        private void ReadSensorData()
+        {
+            _logger.LogInformation("Sensor reading...");
+            try
+            {
+                var readings = _hardwareMonitor.Read();
+                foreach (var reading in readings)
                 {
-                    _logger.LogError(ex, $"{nameof(HardwareMonitor)} failed to read hardware data");
+                    Console.WriteLine($"{reading.TimeStamp} {reading.Hardware.Type} {reading.Hardware.Name} {reading.Sensor.Type} {reading.Sensor.Name} {reading.Value}");
                 }
 
-                await Task.Delay(_periodicity*1000, stoppingToken);
+                _sensorCacheWriter.Add(readings.Select(sr => sr.Map()));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(HardwareMonitor)} failed to read hardware data");
+            }
+        }
+
+        private void CleanSensorReadingCache()
+        {
+            _logger.LogInformation("Cleaning sensor readings cache ...");
+            try
+            {
+                _sensorCacheCleaner.Clean();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to clean sensor readings cache");
             }
         }
     }
