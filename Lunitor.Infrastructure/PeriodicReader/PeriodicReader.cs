@@ -1,7 +1,6 @@
 using Lunitor.Core;
 using Lunitor.Core.Interfaces.Cache;
 using Lunitor.Shared;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,17 +12,14 @@ namespace Lunitor.Infrastructure.PeriodicReader
     internal class PeriodicReader : BackgroundService
     {
         private readonly ILogger<PeriodicReader> _logger;
-        private readonly int _periodicity;
         private readonly IHardwareMonitor _hardwareMonitor;
         private readonly ISensorCacheMutator _sensorCacheMutator;
 
         public PeriodicReader(ILogger<PeriodicReader> logger,
-            IConfiguration configuration,
             IHardwareMonitor hardwareMonitor,
             ISensorCacheMutator sensorCacheMutator)
         {
             _logger = logger;
-            _periodicity = configuration.GetValue<int>(ConfigurationConstants.PeriodicityKey);
 
             _hardwareMonitor = hardwareMonitor;
             _sensorCacheMutator = sensorCacheMutator;
@@ -31,12 +27,13 @@ namespace Lunitor.Infrastructure.PeriodicReader
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Starting with {periodicity}s periodicity", _periodicity);
+            _logger.LogInformation("Starting with {periodicity}s periodicity", PeriodicReaderConfiguration.Periodicity);
 
             _hardwareMonitor.Start(cpu: true, gpu: true, memory: true, storage: true, network: true, motherboard: true, controller: true);
 
             return base.StartAsync(cancellationToken);
         }
+
         public override Task StopAsync(CancellationToken cancellationToken)
         {
             _hardwareMonitor.Stop();
@@ -54,7 +51,7 @@ namespace Lunitor.Infrastructure.PeriodicReader
 
                 ReadSensorData();
 
-                await Task.Delay(_periodicity * 1000, stoppingToken);
+                await Task.Delay(PeriodicReaderConfiguration.Periodicity * 1000, stoppingToken);
             }
         }
 

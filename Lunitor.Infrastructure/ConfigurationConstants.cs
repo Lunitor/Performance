@@ -1,4 +1,4 @@
-﻿namespace Lunitor.Shared
+﻿namespace Lunitor.Infrastructure
 {
     public static class ConfigurationConstants
     {

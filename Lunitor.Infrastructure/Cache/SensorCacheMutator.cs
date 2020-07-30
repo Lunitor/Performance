@@ -1,6 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using Lunitor.Core.Interfaces.Cache;
 using Lunitor.Core.Models;
+using Lunitor.Infrastructure.PeriodicReader;
 using Lunitor.Shared;
 using Lunitor.Shared.Dto;
 using Microsoft.Extensions.Configuration;
