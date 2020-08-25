@@ -55,6 +55,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="api\ConfigurationApi.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="api\GqlApi.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
@@ -74,6 +77,9 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="components\hardwarechart\ITrackerInfo.ts" />
+    <TypeScriptCompile Include="components\PeriodicityChanger.tsx">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="components\SensorsMenu.tsx" />
     <TypeScriptCompile Include="models\IGraphQLSensorReadingResult.ts">
       <SubType>Code</SubType>

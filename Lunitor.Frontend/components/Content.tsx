@@ -6,6 +6,8 @@ import { ChartsMenu } from "../components/ChartsMenu";
 import { HardwareCharts } from "../components/HardwareCharts";
 import { GqlApi } from "../api/GQLApi";
 import { IApi } from "../api/IApi";
+import { PeriodicityChanger } from "./PeriodicityChanger";
+import { ConfigurationApi } from "../api/ConfigurationApi";
 
 type ContentProps = {}
 type ContentState = {
@@ -17,6 +19,7 @@ type ContentState = {
 export class Content extends React.Component<ContentProps, ContentState> {
     timer: NodeJS.Timeout;
     api: IApi;
+    configurationApi: ConfigurationApi;
 
     constructor(props) {
         super(props);
@@ -28,6 +31,7 @@ export class Content extends React.Component<ContentProps, ContentState> {
         };
 
         this.api = new GqlApi;
+        this.configurationApi = new ConfigurationApi();
     }
 
     render() {
@@ -42,6 +46,9 @@ export class Content extends React.Component<ContentProps, ContentState> {
 
         var page = [];
 
+        const periodicityChanger = <PeriodicityChanger />;
+        page.push(periodicityChanger);
+
         const chartsMenu = <ChartsMenu hardwares={this.state.hardwares} handleClick={this.handleHardwareSwitch.bind(this)} />;
         page.push(chartsMenu);
 
@@ -54,7 +61,9 @@ export class Content extends React.Component<ContentProps, ContentState> {
     async componentDidMount() {
         await this.loadSensorReadings();
 
-        this.timer = setInterval(() => this.loadSensorReadings(), 5000);
+        const periodictyInMs = await this.configurationApi.getPeriodicity() * 1000;
+
+        this.timer = setInterval(() => this.loadSensorReadings(), periodictyInMs);
     }
 
     async componentWillUnmount() {
@@ -64,6 +73,7 @@ export class Content extends React.Component<ContentProps, ContentState> {
     }
 
     private async loadSensorReadings() {
+        console.log("load sensor readings...");
         try {
             var data = await this.api.fetchData();
 

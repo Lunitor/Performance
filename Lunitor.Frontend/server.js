@@ -7,6 +7,7 @@ var app = express();
 
 app.use('/sensorreadings', createProxyMiddleware({ target: 'http://localhost:55800', changeOrigin: true }));
 app.use('/graphql', createProxyMiddleware({ target: 'http://localhost:55800', changeOrigin: true }));
+app.use('/configuration', createProxyMiddleware({ target: 'http://localhost:55800', changeOrigin: true }));
 
 var staticPath = path.join(__dirname, '/');
 app.use(express.static(staticPath));
