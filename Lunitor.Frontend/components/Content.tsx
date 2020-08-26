@@ -4,10 +4,10 @@ import { ISensorReading } from "../models/ISensorReading";
 import { ISensorReadingSeries } from "../models/ISensorReadingSeries";
 import { ChartsMenu } from "../components/ChartsMenu";
 import { HardwareCharts } from "../components/HardwareCharts";
-import { GqlApi } from "../api/GQLApi";
 import { IApi } from "../api/IApi";
 import { PeriodicityChanger } from "./PeriodicityChanger";
 import { ConfigurationApi } from "../api/ConfigurationApi";
+import { RestApi } from "../api/RestApi";
 
 type ContentProps = {}
 type ContentState = {
@@ -30,7 +30,7 @@ export class Content extends React.Component<ContentProps, ContentState> {
             hardwares: null
         };
 
-        this.api = new GqlApi;
+        this.api = new RestApi;
         this.configurationApi = new ConfigurationApi();
     }
 
@@ -73,7 +73,6 @@ export class Content extends React.Component<ContentProps, ContentState> {
     }
 
     private async loadSensorReadings() {
-        console.log("load sensor readings...");
         try {
             var data = await this.api.fetchData();
 
